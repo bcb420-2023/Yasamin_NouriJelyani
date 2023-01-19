@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "Experiment with R"
 output: html_notebook
 ---
 
@@ -7,9 +7,63 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
+ This function opens a window of R packages available
 ```{r}
-plot(cars)
+library()
 ```
+
+The loaded packages:
+```{r}
+search()
+```
+```{r}
+if (! requireNamespace("seqinr", quietly=TRUE)) {
+  install.packages("seqinr")
+}
+```
+
+
+
+gives list of functions
+```{r}
+ls("package:seqinr")
+```
+
+Datasets for the package
+```{r}
+data(package="seqinr")
+```
+
+load the data
+```{r}
+data(aaindex, package = "seqinr")
+
+```
+
+
+and plot
+```{r}
+
+plot(aaindex$FASG890101$I,
+     aaindex$PONJ960101$I,
+     xlab="hydrophobicity", ylab="volume", type="n")
+text(aaindex$FASG890101$I,
+     aaindex$PONJ960101$I,
+     labels=a(names(aaindex$FASG890101$I)))
+
+```
+
+Get relevant packages
+```{r}
+if (! requireNamespace("sos", quietly=TRUE)) {
+    install.packages("sos")
+}
+library(help = sos)       # basic information
+browseVignettes("sos")    # available vignettes
+ 
+sos::findFn("moving average")
+```
+
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
 
