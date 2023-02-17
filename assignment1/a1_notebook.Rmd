@@ -1,0 +1,82 @@
+---
+title: "Assignment 2"
+author: "Yasamin Nouri Jelyani"
+output:
+  html_document:
+    df_print: paged
+---
+
+First, I downloaded the GEOmetaDB, and got access to the meta data:
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+if (!requireNamespace("GEOmetadb", quietly = TRUE))
+    BiocManager::install("GEOmetadb")
+
+library(GEOmetadb)
+
+if( !file.exists("GEOmetadb.sqlite") ) {
+    demo_sqlfile <- getSQLiteFile(destdir = getwd(), destfile = "GEOmetadb.sqlite.gz", type = "demo")
+} else {
+    demo_sqlfile <- "GEOmetadb.sqlite"
+    
+}
+
+
+file.info(demo_sqlfile)
+```
+
+
+Then, I made the connection to the database:
+```{r}
+con <- dbConnect(SQLite(), demo_sqlfile)
+geo_tables <- dbListTables(con)
+geo_tables
+
+dbListFields(con,'gse')
+
+
+dbGetQuery(con,'PRAGMA TABLE_INFO(gpl)')
+
+
+rs <- dbGetQuery(con,'select * from gse limit 5')
+rs[,1:7]
+
+
+rs <- dbGetQuery(con,paste("select gse,title from gse where",
+                           "contributor like '%Sean%Davis%'",sep=" "))
+rs
+```
+
+
+```{r}
+geo_tables <- dbListTables(con)
+geo_tables
+
+dbListFields(con,'gse')
+
+
+results <- dbGetQuery(con,'select * from gpl limit 5')
+knitr::kable(head(results[,1:5]), format = "html")
+
+num_platforms <- dbGetQuery(con,'select count(*) from gpl')
+num_platforms
+
+dbListFields(con,'gpl')
+
+uniq_tech <- dbGetQuery(con,'select distinct technology 
+                        from gpl')
+nrow(uniq_tech)
+
+```
+
+
+
+Disconnect from the database:
+```{r}
+
+dbDisconnect(con)
+
+```
+
