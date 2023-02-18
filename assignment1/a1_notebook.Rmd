@@ -68,6 +68,12 @@ sfiles = getGEOSuppFiles('GSE119827')
 ```
 
 
+```{r}
+library(readr)
+GSE119827_Cuff_Gene_Counts <- read_csv("GSE119827/GSE119827_Cuff_Gene_Counts.csv")
+```
+
+
 Disconnect from the database:
 ```{r}
 
