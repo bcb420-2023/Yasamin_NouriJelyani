@@ -3,11 +3,19 @@ title: "Assignment 1"
 author: "Yasamin Nouri Jelyani"
 output:
   html_document:
+    toc: true
+    toc_depth: 2
     df_print: paged
+bibliography: a2.bib
+csl: biomed-central.csl
+nocite: '@*'
 ---
 
+# Finding the Expression Dataset
+
 First, I downloaded the GEOmetaDB, and got access to the meta data:
-```{r}
+```{r warning=FALSE}
+
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
@@ -31,7 +39,7 @@ con <- dbConnect(SQLite(), demo_sqlfile)
 
 
 
-```{r}
+```{r warning=FALSE}
 sql <- paste("SELECT DISTINCT gse.title,gse.gse, gpl.title,",
              " gse.submission_date,",
              " gse.supplementary_file", #<<
@@ -63,21 +71,23 @@ rs <- dbGetQuery(con,sql)
 ```
 
 get the data
-```{r}
+```{r eval=FALSE}
 sfiles = getGEOSuppFiles('GSE119827')
 ```
 
 
-```{r}
+```{r warning=FALSE}
 library(readr)
 GSE119827_Cuff_Gene_Counts <- read_csv("GSE119827/GSE119827_Cuff_Gene_Counts.csv")
 ```
 
 
 Disconnect from the database:
-```{r}
+```{r echo=FALSE}
 
 dbDisconnect(con)
 
 ```
+
+# References
 

@@ -12,7 +12,7 @@
 <meta name="author" content="Yasamin Nouri Jelyani" />
 
 
-<title>Assignment 2</title>
+<title>Assignment 1</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1523,6 +1523,28 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
 
 
 
@@ -1620,12 +1642,21 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Assignment 2</h1>
+<h1 class="title toc-ignore">Assignment 1</h1>
 <h4 class="author">Yasamin Nouri Jelyani</h4>
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#finding-the-expression-dataset" id="toc-finding-the-expression-dataset">Finding the Expression
+Dataset</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+</div>
 
+<div id="finding-the-expression-dataset" class="section level1">
+<h1>Finding the Expression Dataset</h1>
 <p>First, I downloaded the GEOmetaDB, and got access to the meta
 data:</p>
 <pre class="r"><code>if (!requireNamespace(&quot;BiocManager&quot;, quietly = TRUE))
@@ -1665,196 +1696,2119 @@ if (!requireNamespace(&quot;GEOmetadb&quot;, quietly = TRUE))
     
 }
 
-
 file.info(demo_sqlfile)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["size"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["isdir"],"name":[2],"type":["lgl"],"align":["right"]},{"label":["mode"],"name":[3],"type":["octmode"],"align":["right"]},{"label":["mtime"],"name":[4],"type":["dttm"],"align":["right"]},{"label":["ctime"],"name":[5],"type":["dttm"],"align":["right"]},{"label":["atime"],"name":[6],"type":["dttm"],"align":["right"]},{"label":["uid"],"name":[7],"type":["int"],"align":["right"]},{"label":["gid"],"name":[8],"type":["int"],"align":["right"]},{"label":["uname"],"name":[9],"type":["chr"],"align":["left"]},{"label":["grname"],"name":[10],"type":["chr"],"align":["left"]}],"data":[{"1":"87445504","2":"FALSE","3":"644","4":"2023-02-17 18:35:31.316711","5":"2023-02-17 18:35:31.316711","6":"2023-02-17 18:35:31.316711","7":"1000","8":"1000","9":"rstudio","10":"rstudio","_rn_":"GEOmetadb.sqlite"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["size"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["isdir"],"name":[2],"type":["lgl"],"align":["right"]},{"label":["mode"],"name":[3],"type":["octmode"],"align":["right"]},{"label":["mtime"],"name":[4],"type":["dttm"],"align":["right"]},{"label":["ctime"],"name":[5],"type":["dttm"],"align":["right"]},{"label":["atime"],"name":[6],"type":["dttm"],"align":["right"]},{"label":["uid"],"name":[7],"type":["int"],"align":["right"]},{"label":["gid"],"name":[8],"type":["int"],"align":["right"]},{"label":["uname"],"name":[9],"type":["chr"],"align":["left"]},{"label":["grname"],"name":[10],"type":["chr"],"align":["left"]}],"data":[{"1":"87445504","2":"FALSE","3":"644","4":"2023-02-17 18:35:31.316711","5":"2023-02-17 18:35:31.316711","6":"2023-02-18 17:25:48.570962","7":"1000","8":"1000","9":"rstudio","10":"rstudio","_rn_":"GEOmetadb.sqlite"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>Then, I made the connection to the database:</p>
-<pre class="r"><code>con &lt;- dbConnect(SQLite(), demo_sqlfile)
-geo_tables &lt;- dbListTables(con)
-geo_tables</code></pre>
-<pre><code>##  [1] &quot;gds&quot;               &quot;gds_subset&quot;        &quot;geoConvert&quot;       
-##  [4] &quot;geodb_column_desc&quot; &quot;gpl&quot;               &quot;gse&quot;              
-##  [7] &quot;gse_gpl&quot;           &quot;gse_gsm&quot;           &quot;gsm&quot;              
-## [10] &quot;metaInfo&quot;          &quot;sMatrix&quot;</code></pre>
-<pre class="r"><code>dbListFields(con,&#39;gse&#39;)</code></pre>
-<pre><code>##  [1] &quot;ID&quot;                   &quot;title&quot;                &quot;gse&quot;                 
-##  [4] &quot;status&quot;               &quot;submission_date&quot;      &quot;last_update_date&quot;    
-##  [7] &quot;pubmed_id&quot;            &quot;summary&quot;              &quot;type&quot;                
-## [10] &quot;contributor&quot;          &quot;web_link&quot;             &quot;overall_design&quot;      
-## [13] &quot;repeats&quot;              &quot;repeats_sample_list&quot;  &quot;variable&quot;            
-## [16] &quot;variable_description&quot; &quot;contact&quot;              &quot;supplementary_file&quot;</code></pre>
-<pre class="r"><code>dbGetQuery(con,&#39;PRAGMA TABLE_INFO(gpl)&#39;)</code></pre>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["cid"],"name":[1],"type":["int"],"align":["right"]},{"label":["name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["type"],"name":[3],"type":["chr"],"align":["left"]},{"label":["notnull"],"name":[4],"type":["int"],"align":["right"]},{"label":["dflt_value"],"name":[5],"type":["lgl"],"align":["right"]},{"label":["pk"],"name":[6],"type":["int"],"align":["right"]}],"data":[{"1":"0","2":"ID","3":"REAL","4":"0","5":"NA","6":"0"},{"1":"1","2":"title","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"2","2":"gpl","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"3","2":"status","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"4","2":"submission_date","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"5","2":"last_update_date","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"6","2":"technology","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"7","2":"distribution","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"8","2":"organism","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"9","2":"manufacturer","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"10","2":"manufacture_protocol","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"11","2":"coating","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"12","2":"catalog_number","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"13","2":"support","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"14","2":"description","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"15","2":"web_link","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"16","2":"contact","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"17","2":"data_row_count","3":"REAL","4":"0","5":"NA","6":"0"},{"1":"18","2":"supplementary_file","3":"TEXT","4":"0","5":"NA","6":"0"},{"1":"19","2":"bioc_package","3":"TEXT","4":"0","5":"NA","6":"0"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-<pre class="r"><code>rs &lt;- dbGetQuery(con,&#39;select * from gse limit 5&#39;)
-rs[,1:7]</code></pre>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["ID"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["title"],"name":[2],"type":["chr"],"align":["left"]},{"label":["gse"],"name":[3],"type":["chr"],"align":["left"]},{"label":["status"],"name":[4],"type":["chr"],"align":["left"]},{"label":["submission_date"],"name":[5],"type":["chr"],"align":["left"]},{"label":["last_update_date"],"name":[6],"type":["chr"],"align":["left"]},{"label":["pubmed_id"],"name":[7],"type":["int"],"align":["right"]}],"data":[{"1":"869","2":"Osteosarcoma TE85 cell tissue culture study","3":"GSE1000","4":"Public on Jan 28 2004","5":"2004-01-27","6":"2013-04-17","7":"NA"},{"1":"8806","2":"Age-dependent aorta transcriptomes in wild-type and apoE-deficient C57BL/6J mice","3":"GSE10000","4":"Public on Dec 16 2008","5":"2007-12-21","6":"2013-05-22","7":"19139167"},{"1":"97992","2":"Molecular and functional sex differences of noradrenergic neurons in the mouse locus coeruleus [Affymetrix]","3":"GSE100002","4":"Public on Apr 30 2018","5":"2017-06-13","6":"2018-05-01","7":"NA"},{"1":"97994","2":"Molecular and functional sex differences of noradrenergic neurons in the mouse locus coeruleus","3":"GSE100005","4":"Public on Apr 30 2018","5":"2017-06-13","6":"2018-05-01","7":"NA"},{"1":"8807","2":"Gene expression profiling in NCoR deficient mouse livers","3":"GSE10001","4":"Public on Dec 04 2008","5":"2007-12-21","6":"2013-05-01","7":"19052228"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-<pre class="r"><code>rs &lt;- dbGetQuery(con,paste(&quot;select gse,title from gse where&quot;,
-                           &quot;contributor like &#39;%Sean%Davis%&#39;&quot;,sep=&quot; &quot;))
-rs</code></pre>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["gse"],"name":[1],"type":["chr"],"align":["left"]},{"label":["title"],"name":[2],"type":["chr"],"align":["left"]}],"data":[{"1":"GSE14543","2":"A molecular function map of Ewing’s Sarcoma"},{"1":"GSE15621","2":"Acute Lymphocytic Leukemia versus associated xenografts"},{"1":"GSE16087","2":"Gene expression profiles of canine osteosarcoma"},{"1":"GSE16088","2":"Gene expression profiles of human osteosarcoma"},{"1":"GSE16091","2":"Gene expression profiles of human osteosarcoma, set2"},{"1":"GSE16102","2":"Gene expression profiles of canine and human osteosarcoma"},{"1":"GSE18544","2":"Expression Profiling of a Mouse Xenograft Model of “Triple-Negative” Breast Cancer Brain Metastases With Vorinostat"},{"1":"GSE19063","2":"Genome-wide map of PAX3-FKHR binding sites in rhabdomyosarcoma"},{"1":"GSE20016","2":"Analyses of Human Brain Metastases of Breast Cancer Reveal the Association between HK2 Up-Regulation and Poor Prognosis"},{"1":"GSE22520","2":"Mouse Models of Alveolar/Embryonal Rhabdomyosarcoma & Spindle Cell Sarcomas"},{"1":"GSE25127","2":"Ewing Sarcoma cell lines treated with mithramycin"},{"1":"GSE25164","2":"UV effects in mouse melanocytes"},{"1":"GSE2553","2":"NHGRI_Sarcoma_Baird"},{"1":"GSE29428","2":"A methyl-deviator epigenotype of estrogen-receptor-positive breast carcinoma is associated with malignant biology"},{"1":"GSE33249","2":"High resolution comparative genomic hybridisation analysis of ductal carcinoma in situ of the breast"},{"1":"GSE41795","2":"Accelerated high-yield generation of limb-innervating motor neurons from human stem cells"},{"1":"GSE4406","2":"Gene expression profiling of CD4+ T-cells and GM6990 lymphoblastoid cell lines"},{"1":"GSE52137","2":"Expression data from thymic epithelial cells of 5-6 weeks old C57BL/6J mice."},{"1":"GSE5357","2":"NHGRI Menin ChIP-Chip"},{"1":"GSE5481","2":"BRAF siRNA NHGRI_Liang_BRAF"},{"1":"GSE7376","2":"Detection of novel amplification units in prostate cancer"},{"1":"GSE7882","2":"Gene Expression and Comparative Genomic Hybridization of Ductal Carcinoma In Situ of the Breast"},{"1":"GSE80005","2":"Gene expression profile in mouse esophageal squamous cell carcinoma"},{"1":"GSE8486","2":"Whole genome DNAse hypersensitivity in human CD4+ T-cells"},{"1":"GSE9328","2":"ATF2 knockout in papillomas"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-<pre class="r"><code>geo_tables &lt;- dbListTables(con)
-geo_tables</code></pre>
-<pre><code>##  [1] &quot;gds&quot;               &quot;gds_subset&quot;        &quot;geoConvert&quot;       
-##  [4] &quot;geodb_column_desc&quot; &quot;gpl&quot;               &quot;gse&quot;              
-##  [7] &quot;gse_gpl&quot;           &quot;gse_gsm&quot;           &quot;gsm&quot;              
-## [10] &quot;metaInfo&quot;          &quot;sMatrix&quot;</code></pre>
-<pre class="r"><code>dbListFields(con,&#39;gse&#39;)</code></pre>
-<pre><code>##  [1] &quot;ID&quot;                   &quot;title&quot;                &quot;gse&quot;                 
-##  [4] &quot;status&quot;               &quot;submission_date&quot;      &quot;last_update_date&quot;    
-##  [7] &quot;pubmed_id&quot;            &quot;summary&quot;              &quot;type&quot;                
-## [10] &quot;contributor&quot;          &quot;web_link&quot;             &quot;overall_design&quot;      
-## [13] &quot;repeats&quot;              &quot;repeats_sample_list&quot;  &quot;variable&quot;            
-## [16] &quot;variable_description&quot; &quot;contact&quot;              &quot;supplementary_file&quot;</code></pre>
-<pre class="r"><code>results &lt;- dbGetQuery(con,&#39;select * from gpl limit 5&#39;)
-knitr::kable(head(results[,1:5]), format = &quot;html&quot;)</code></pre>
+<pre class="r"><code>con &lt;- dbConnect(SQLite(), demo_sqlfile)</code></pre>
+<pre class="r"><code>sql &lt;- paste(&quot;SELECT DISTINCT gse.title,gse.gse, gpl.title,&quot;,
+             &quot; gse.submission_date,&quot;,
+             &quot; gse.supplementary_file&quot;, #&lt;&lt;
+             &quot;FROM&quot;,
+             &quot;  gse JOIN gse_gpl ON gse_gpl.gse=gse.gse&quot;,
+             &quot;  JOIN gpl ON gse_gpl.gpl=gpl.gpl&quot;,
+             &quot;WHERE&quot;,
+             &quot;  gse.submission_date &gt; &#39;2017-01-01&#39; AND&quot;,
+             &quot;  gse.title LIKE &#39;%cancer%&#39; AND&quot;, 
+             &quot;  gpl.organism LIKE &#39;%Homo sapiens%&#39; AND&quot;,
+             &quot;  gpl.technology LIKE &#39;%high-throughput sequencing%&#39; &quot;,
+             &quot;  ORDER BY gse.submission_date DESC&quot;,sep=&quot; &quot;)
+
+rs &lt;- dbGetQuery(con,sql)
+counts_files &lt;- rs$supplementary_file[grep(rs$supplementary_file,
+                              pattern = &quot;count|cnt&quot;,ignore.case = TRUE)]
+
+series_of_interest &lt;- rs$gse[grep(rs$supplementary_file,
+                              pattern = &quot;count|cnt&quot;,ignore.case = TRUE)]
+
+shortened_filenames &lt;- unlist(lapply(counts_files,
+              FUN = function(x){x &lt;- unlist(strsplit(x,&quot;;&quot;)) ;
+              x &lt;- x[grep(x,pattern= &quot;count|cnt&quot;,ignore.case = TRUE)];
+                tail(unlist(strsplit(x,&quot;/&quot;)),n=1)}))
+shortened_filenames[1:10]</code></pre>
+<pre><code>##  [1] &quot;GSE119827_Cuff_Gene_Counts.csv.gz&quot;                                             
+##  [2] &quot;GSE114575_Counts_FPKM.xlsx&quot;                                                    
+##  [3] &quot;GSE114597_TRPS1_sh41_sh43_SUM159PT_Day_3-4-5_combined-gene-level-counts.csv.gz&quot;
+##  [4] &quot;GSE114330_BRCA-cell-lines_cellular_smRNA-seq_piranha_countTable.txt.gz&quot;        
+##  [5] &quot;GSE113863_expression_raw_counts.csv.gz&quot;                                        
+##  [6] &quot;GSE113863_expression_raw_counts.csv.gz&quot;                                        
+##  [7] &quot;GSE113476_PDX_RNA_seq_data_normalized_read_counts.xlsx&quot;                        
+##  [8] &quot;GSE111653_GilkesSalmonCounts.csv.gz&quot;                                           
+##  [9] &quot;GSE110938_GeneCounts.tsv.gz&quot;                                                   
+## [10] &quot;GSE108757_tnbc_counts_logNorm.txt.gz&quot;</code></pre>
+<pre class="r"><code>rs &lt;- dbGetQuery(con,sql)
+ knitr::kable(rs, format = &quot;html&quot;)</code></pre>
 <table>
 <thead>
 <tr>
-<th style="text-align:right;">
-ID
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:left;">
+gse
 </th>
 <th style="text-align:left;">
 title
 </th>
 <th style="text-align:left;">
-gpl
-</th>
-<th style="text-align:left;">
-status
-</th>
-<th style="text-align:left;">
 submission_date
+</th>
+<th style="text-align:left;">
+supplementary_file
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:right;">
-7305
+<td style="text-align:left;">
+RNA-seq analysis of control and NRDE2-depleted breast cancer cells
 </td>
 <td style="text-align:left;">
-[Tgondiia520372] Affymetrix Toxoplasma gondii Custom GeneChip (CDF:
-ToxoDB version 5)
+GSE119827
 </td>
 <td style="text-align:left;">
-GPL10000
+Illumina NextSeq 500 (Homo sapiens)
 </td>
 <td style="text-align:left;">
-Public on Feb 02 2010
+2018-09-11
 </td>
 <td style="text-align:left;">
-2010-02-02
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119827/suppl/GSE119827_Cuff_Gene_Counts.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119827/suppl/GSE119827_Cuff_Gene_Counts.csv.gz</a>
 </td>
 </tr>
 <tr>
-<td style="text-align:right;">
-7338
+<td style="text-align:left;">
+Human Adipocytes Regulate Gene Expression in Triple-negative Breast
+Cancer Assessed by NGS Sequencing
 </td>
 <td style="text-align:left;">
-[mbiAth1a520184] Mendel Arabidopsis Genome Array
+GSE119377
 </td>
 <td style="text-align:left;">
-GPL10037
+Illumina HiSeq 2500 (Homo sapiens)
 </td>
 <td style="text-align:left;">
-Public on Jun 29 2011
+2018-09-03
 </td>
 <td style="text-align:left;">
-2010-02-11
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_RAW.tar</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_all_miRNA_exp.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_all_miRNA_exp.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_lncRNA.expression.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_lncRNA.expression.txt.gz</a>
 </td>
 </tr>
 <tr>
-<td style="text-align:right;">
-7350
+<td style="text-align:left;">
+Human Adipocytes Regulate Gene Expression in Triple-negative Breast
+Cancer Assessed by NGS Sequencing
 </td>
 <td style="text-align:left;">
-[ATH1-121501] Affymetrix Arabidopsis ATH1 Genome Array - custom CDF
-(AtH1_At_TAIR)
+GSE119377
 </td>
 <td style="text-align:left;">
-GPL10050
+HiSeq X Ten (Homo sapiens)
 </td>
 <td style="text-align:left;">
-Public on Feb 17 2010
+2018-09-03
 </td>
 <td style="text-align:left;">
-2010-02-16
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_RAW.tar</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_all_miRNA_exp.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_all_miRNA_exp.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_lncRNA.expression.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119377/suppl/GSE119377_lncRNA.expression.txt.gz</a>
 </td>
 </tr>
 <tr>
-<td style="text-align:right;">
-7353
+<td style="text-align:left;">
+Short-term effect of Boost versus Radical doses of Intraoperative
+electron Radiotherapy in breast cancer tumor bed using high-throughput
+approaches
 </td>
 <td style="text-align:left;">
-SMD Print_1214 Homo sapiens
+GSE119204
 </td>
 <td style="text-align:left;">
-GPL10054
+Illumina HiSeq 4000 (Homo sapiens)
 </td>
 <td style="text-align:left;">
-Public on Feb 17 2010
+2018-08-29
 </td>
 <td style="text-align:left;">
-2010-02-16
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119204/suppl/GSE119204_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119204/suppl/GSE119204_RAW.tar</a>
 </td>
 </tr>
 <tr>
-<td style="text-align:right;">
-7359
+<td style="text-align:left;">
+ATO treatment on mesenchymal stem cells (MSCs) interacting breast cancer
+cells
 </td>
 <td style="text-align:left;">
-[HuGene-1_0-st] Affymetrix Human Gene 1.0 ST Array (CDF:
-HuGene10stv1_Hs_REFSEQ.cdf)
+GSE118923
 </td>
 <td style="text-align:left;">
-GPL10063
+Illumina NextSeq 500 (Homo sapiens; Mus musculus)
 </td>
 <td style="text-align:left;">
-Public on Feb 15 2011
+2018-08-22
 </td>
 <td style="text-align:left;">
-2010-02-18
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE118nnn/GSE118923/suppl/GSE118923_CoAs.RData.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE118nnn/GSE118923/suppl/GSE118923_CoAs.RData.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE118nnn/GSE118923/suppl/GSE118923_CoAs.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE118nnn/GSE118923/suppl/GSE118923_CoAs.csv.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Differences in microRNA expression in breast cancer between women of
+African and European ancestry
+</td>
+<td style="text-align:left;">
+GSE117452
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-07-20
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE117nnn/GSE117452/suppl/GSE117452_expn_matrix_mimat.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE117nnn/GSE117452/suppl/GSE117452_expn_matrix_mimat.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNA expression in BRCA2-depleted breast cancer cell lines
+</td>
+<td style="text-align:left;">
+GSE116943
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-07-11
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Transcriptomic but not genomic variability confers phenotype of breast
+cancer stem cells
+</td>
+<td style="text-align:left;">
+GSE116180
+</td>
+<td style="text-align:left;">
+HiSeq X Ten (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-06-22
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE116nnn/GSE116180/suppl/GSE116180_All_FPKM_table.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE116nnn/GSE116180/suppl/GSE116180_All_FPKM_table.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Discovery of Selective Estrogen Receptor Covalent Antagonists (SERCAs)
+for the treatment of ERa(WT) and ERa(MUT) breast cancer.
+</td>
+<td style="text-align:left;">
+GSE115611
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-06-11
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE115nnn/GSE115611/suppl/GSE115611_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE115nnn/GSE115611/suppl/GSE115611_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Discovery of Selective Estrogen Receptor Covalent Antagonists (SERCAs)
+for the treatment of ERa(WT) and ERa(MUT) breast cancer.
+</td>
+<td style="text-align:left;">
+GSE115611
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 4000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-06-11
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE115nnn/GSE115611/suppl/GSE115611_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE115nnn/GSE115611/suppl/GSE115611_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+small RNA profiling of breast cancer cell lines [knockdowns]
+</td>
+<td style="text-align:left;">
+GSE114773
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-05-22
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114773/suppl/GSE114773_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114773/suppl/GSE114773_RAW.tar</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114773/suppl/GSE114773_TCGA-BRCA_all_piranha_collapsed_loci.bed.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114773/suppl/GSE114773_TCGA-BRCA_all_piranha_collapsed_loci.bed.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNA-seq profiling of Breast cancer PDX samples
+</td>
+<td style="text-align:left;">
+GSE114575
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114575/suppl/GSE114575_Counts_FPKM.xlsx" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114575/suppl/GSE114575_Counts_FPKM.xlsx</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TRPS1 is a lineage-specific transcriptional dependency in breast cancer
+[Seq]
+</td>
+<td style="text-align:left;">
+GSE114597
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114597/suppl/GSE114597_DFCI_EpiCluster_RNA-Seq.reads.gct.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114597/suppl/GSE114597_DFCI_EpiCluster_RNA-Seq.reads.gct.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114597/suppl/GSE114597_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114597/suppl/GSE114597_RAW.tar</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114597/suppl/GSE114597_TRPS1_sh41_sh43_HCC3153_Day_3-4-5_combined-gene-level-counts.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114597/suppl/GSE114597_TRPS1_sh41_sh43_HCC3153_Day_3-4-5_combined-gene-level-counts.csv.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114597/suppl/GSE114597_TRPS1_sh41_sh43_SUM159PT_Day_3-4-5_combined-gene-level-counts.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114597/suppl/GSE114597_TRPS1_sh41_sh43_SUM159PT_Day_3-4-5_combined-gene-level-counts.csv.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TRPS1 is a lineage-specific transcriptional dependency in breast cancer
+</td>
+<td style="text-align:left;">
+GSE114600
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114600/suppl/GSE114600_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114600/suppl/GSE114600_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Discovery and annotation of intracellular and extracellular orphan
+non-coding RNAs in breast cancer
+</td>
+<td style="text-align:left;">
+GSE114366
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-05-11
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114366/suppl/GSE114366_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114366/suppl/GSE114366_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Discovery and annotation of intracellular and extracellular orphan
+non-coding RNAs in breast cancer
+</td>
+<td style="text-align:left;">
+GSE114366
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 4000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-05-11
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114366/suppl/GSE114366_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114366/suppl/GSE114366_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+small RNA profiling of extracellular RNA from breast cancer cell lines
+</td>
+<td style="text-align:left;">
+GSE114327
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 4000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-05-10
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114327/suppl/GSE114327_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114327/suppl/GSE114327_RAW.tar</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114327/suppl/GSE114327_hg38_oncRNA_437_BRCA-lines_sorted.bed.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114327/suppl/GSE114327_hg38_oncRNA_437_BRCA-lines_sorted.bed.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+small RNA profiling of extracellular RNA from breast cancer cell lines
+[EV]
+</td>
+<td style="text-align:left;">
+GSE114329
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 4000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-05-10
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114329/suppl/GSE114329_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114329/suppl/GSE114329_RAW.tar</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114329/suppl/GSE114329_hg38_oncRNA_437_BRCA-lines_sorted.bed.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114329/suppl/GSE114329_hg38_oncRNA_437_BRCA-lines_sorted.bed.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+small RNA profiling of breast cancer cell lines
+</td>
+<td style="text-align:left;">
+GSE114330
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 4000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-05-10
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114330/suppl/GSE114330_BRCA-cell-lines_cellular_smRNA-seq_piranha_countTable.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114330/suppl/GSE114330_BRCA-cell-lines_cellular_smRNA-seq_piranha_countTable.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114330/suppl/GSE114330_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114330/suppl/GSE114330_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+An assessment of prognostic immunity markers in breast cancer
+</td>
+<td style="text-align:left;">
+GSE113863
+</td>
+<td style="text-align:left;">
+Illumina MiSeq (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-04-30
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_cpm_log_imputed.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_cpm_log_imputed.csv.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_data_analysis.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_data_analysis.csv.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_dwd_normalized_std_expression.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_dwd_normalized_std_expression.csv.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_expression_raw_counts.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_expression_raw_counts.csv.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+An assessment of prognostic immunity markers in breast cancer
+</td>
+<td style="text-align:left;">
+GSE113863
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-04-30
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_cpm_log_imputed.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_cpm_log_imputed.csv.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_data_analysis.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_data_analysis.csv.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_dwd_normalized_std_expression.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_dwd_normalized_std_expression.csv.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_expression_raw_counts.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113863/suppl/GSE113863_expression_raw_counts.csv.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNAseq of Breast cancer PDX samples
+</td>
+<td style="text-align:left;">
+GSE113476
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-04-20
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113476/suppl/GSE113476_PDX_RNA_seq_data_normalized_read_counts.xlsx" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113476/suppl/GSE113476_PDX_RNA_seq_data_normalized_read_counts.xlsx</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Multi-omics Profiling of Younger Asian Breast Cancers Reveals
+Distinctive Molecular Signatures
+</td>
+<td style="text-align:left;">
+GSE113184
+</td>
+<td style="text-align:left;">
+Illumina hiseq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-04-16
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113184/suppl/GSE113184_expression_tpm.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113184/suppl/GSE113184_expression_tpm.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+High-throughput RNA sequencing on circular RNA profiles of human
+triple-negative breast cancer and adjacent normal tissues
+</td>
+<td style="text-align:left;">
+GSE113230
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 3000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-04-16
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113230/suppl/GSE113230_T1.N1.circ_expression.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113230/suppl/GSE113230_T1.N1.circ_expression.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113230/suppl/GSE113230_T2.T3.N2.N3circ_expression.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE113nnn/GSE113230/suppl/GSE113230_T2.T3.N2.N3circ_expression.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A SIRT1-centered Circuitry Regulates Breast Cancer Stemness and
+Metastasis
+</td>
+<td style="text-align:left;">
+GSE112365
+</td>
+<td style="text-align:left;">
+HiSeq X Ten (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-03-27
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE112nnn/GSE112365/suppl/GSE112365_all_samples_rpkm_and_RC.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE112nnn/GSE112365/suppl/GSE112365_all_samples_rpkm_and_RC.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Targeting EZH2 increases the vulnerability of triple-negative breast
+cancer
+</td>
+<td style="text-align:left;">
+GSE112378
+</td>
+<td style="text-align:left;">
+BGISEQ-500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-03-27
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE112nnn/GSE112378/suppl/GSE112378_all_samples_RPKM.tsv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE112nnn/GSE112378/suppl/GSE112378_all_samples_RPKM.tsv.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Targeting tumour re-wiring by triple blockade of mTORC1, epidermal
+growth factor and estrogen receptor signalling pathways in endocrine
+resistant breast cancer
+</td>
+<td style="text-align:left;">
+GSE112401
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-03-27
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE112nnn/GSE112401/suppl/GSE112401_cuffdiff_gene_exp.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE112nnn/GSE112401/suppl/GSE112401_cuffdiff_gene_exp.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNA-Seq of Circulating Tumor Cells in Stage II-III Breast Cancer
+</td>
+<td style="text-align:left;">
+GSE111842
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-03-14
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111842/suppl/GSE111842_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111842/suppl/GSE111842_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Metastasis in triple-negative breast cancer
+</td>
+<td style="text-align:left;">
+GSE111706
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 1500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-03-12
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111706/suppl/GSE111706_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111706/suppl/GSE111706_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A consensus hypoxia signature in breast cancer
+</td>
+<td style="text-align:left;">
+GSE111653
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 4000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-03-09
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111653/suppl/GSE111653_GilkesSalmonCounts.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111653/suppl/GSE111653_GilkesSalmonCounts.csv.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNA-sequencing of tamoxifen-resistant and -sensitive breast cancer cell
+lines.
+</td>
+<td style="text-align:left;">
+GSE111151
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-02-26
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417177.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417177.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417178.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417178.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417179.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417179.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417180.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417180.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417181.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417181.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417182.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417182.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417183.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417183.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417184.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_GSM1417184.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE111nnn/GSE111151/suppl/GSE111151_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Differential gene expression of tissue-resident memory and effector
+memory T cells in breast cancer
+</td>
+<td style="text-align:left;">
+GSE110938
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-02-21
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110938/suppl/GSE110938_GeneCounts.tsv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110938/suppl/GSE110938_GeneCounts.tsv.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110938/suppl/GSE110938_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110938/suppl/GSE110938_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNA sequencing Facilitates Quantitative Analysis of luminal breast
+cancer cells and basal breast cancer cells Transcriptomes
+</td>
+<td style="text-align:left;">
+GSE110810
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 4000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-02-19
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110810/suppl/GSE110810_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110810/suppl/GSE110810_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Integrated RNA and DNA sequencing reveals early drivers of metastatic
+breast cancer
+</td>
+<td style="text-align:left;">
+GSE110590
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-02-14
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110590/suppl/GSE110590_RAP_A16_log2.sne.tsv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110590/suppl/GSE110590_RAP_A16_log2.sne.tsv.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Integrated RNA and DNA sequencing reveals early drivers of metastatic
+breast cancer
+</td>
+<td style="text-align:left;">
+GSE110590
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-02-14
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110590/suppl/GSE110590_RAP_A16_log2.sne.tsv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110590/suppl/GSE110590_RAP_A16_log2.sne.tsv.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNA sequencing data from triple-negative breast cancer patient-derived
+xenografts (PDX)
+</td>
+<td style="text-align:left;">
+GSE110626
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-02-14
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110626/suppl/GSE110626_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE110nnn/GSE110626/suppl/GSE110626_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Comparative Transcriptomics of Triple Negative Breast Cancer Stem Cells
+and Differentiated Tumor Cells Identifies Teneurin-4 as a Potential
+Therapeutic Target
+</td>
+<td style="text-align:left;">
+GSE109798
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-01-29
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE109nnn/GSE109798/suppl/GSE109798_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE109nnn/GSE109798/suppl/GSE109798_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Role of SUMOylation in differential ERα transcriptional repression by
+SERMs and pure antiestrogens in breast cancer cells
+</td>
+<td style="text-align:left;">
+GSE108883
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-01-08
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE108nnn/GSE108883/suppl/GSE108883_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE108nnn/GSE108883/suppl/GSE108883_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Targeting the vulnerability of RB tumor suppressor loss in triple
+negative breast cancer
+</td>
+<td style="text-align:left;">
+GSE108757
+</td>
+<td style="text-align:left;">
+AB SOLiD 4 System (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2018-01-04
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE108nnn/GSE108757/suppl/GSE108757_tnbc_counts_logNorm.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE108nnn/GSE108757/suppl/GSE108757_tnbc_counts_logNorm.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Paclitaxel plus Cirmtuzumab Achieves Greater Clearance of
+Patient-derived Xenografts By Targeting ROR1+ Breast Cancer Stem Cells
+</td>
+<td style="text-align:left;">
+GSE108632
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 4000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-12-29
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE108nnn/GSE108632/suppl/GSE108632_normalized_data.xlsx" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE108nnn/GSE108632/suppl/GSE108632_normalized_data.xlsx</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+miRNA sequencing on triple negative breast cancer cell lines
+</td>
+<td style="text-align:left;">
+GSE108286
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 3000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-12-19
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE108nnn/GSE108286/suppl/GSE108286_miRNA_cleaned.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE108nnn/GSE108286/suppl/GSE108286_miRNA_cleaned.csv.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Transcriptome Analysis Reveals a Role for Myc in Constitutive and
+Antiestrogen-resistant Proliferation of Breast Cancer Cells Expressing
+ERαY537S and ERαD538G Mutations
+</td>
+<td style="text-align:left;">
+GSE108304
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 4000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-12-19
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE108nnn/GSE108304/suppl/GSE108304_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE108nnn/GSE108304/suppl/GSE108304_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+siRNA-mediated silencing of ORAI3 in MDA-MB-468 breast cancer cells
+exposed to hypoxia
+</td>
+<td style="text-align:left;">
+GSE107692
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-12-05
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Comparing oestrogen-responsive genes in endometrial and breast cancer
+cell lines
+</td>
+<td style="text-align:left;">
+GSE107693
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-12-05
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107693/suppl/GSE107693_Cell_lines_E2_3hrs_TMM.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107693/suppl/GSE107693_Cell_lines_E2_3hrs_TMM.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNASEQ Analysis of sh-TRC and sh-MIR100HG in the triplex negative breast
+cancer
+</td>
+<td style="text-align:left;">
+GSE107717
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-12-05
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107717/suppl/GSE107717_Gene_Expression_raw_counts.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107717/suppl/GSE107717_Gene_Expression_raw_counts.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP3 regulated gene expression in breast cancer cells
+</td>
+<td style="text-align:left;">
+GSE107564
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-12-01
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107564/suppl/GSE107564_control.vs.shIMP_75_treated.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107564/suppl/GSE107564_control.vs.shIMP_75_treated.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107564/suppl/GSE107564_control.vs.shIMP_77_treated.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107564/suppl/GSE107564_control.vs.shIMP_77_treated.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+tRNA-derived small non-coding RNAs (tDRs) as novel predictive biomarkers
+for trastuzumab-resistant breast cancer.
+</td>
+<td style="text-align:left;">
+GSE107473
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-11-29
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107473/suppl/GSE107473_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107473/suppl/GSE107473_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNAseq analysis of ruxolitinib treated breast cancers
+</td>
+<td style="text-align:left;">
+GSE107000
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-11-16
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107000/suppl/GSE107000_rux_TPM.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107000/suppl/GSE107000_rux_TPM.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TRPS1 shapes YAP/TEAD-dependent transcription in breast cancer cells
+[RNA-seq]
+</td>
+<td style="text-align:left;">
+GSE107010
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-11-16
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107010/suppl/GSE107010_mcf7_shtrps1_rpkm_table.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107010/suppl/GSE107010_mcf7_shtrps1_rpkm_table.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107010/suppl/GSE107010_mcf7_yap_i5sa_rpkm_table.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107010/suppl/GSE107010_mcf7_yap_i5sa_rpkm_table.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107010/suppl/GSE107010_t47d_sitrps1_rpkm_table.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107010/suppl/GSE107010_t47d_sitrps1_rpkm_table.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TRPS1 shapes YAP/TEAD-dependent transcription in breast cancer cells
+</td>
+<td style="text-align:left;">
+GSE107023
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-11-16
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107023/suppl/GSE107023_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107023/suppl/GSE107023_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TRPS1 shapes YAP/TEAD-dependent transcription in breast cancer cells
+</td>
+<td style="text-align:left;">
+GSE107023
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-11-16
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107023/suppl/GSE107023_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE107nnn/GSE107023/suppl/GSE107023_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covalent inhibitor of the Rho family inhibits the migration of breast
+cancer cells
+</td>
+<td style="text-align:left;">
+GSE106605
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-11-07
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE106nnn/GSE106605/suppl/GSE106605_gene_exp.diff.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE106nnn/GSE106605/suppl/GSE106605_gene_exp.diff.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ETS1 acts as a tumor suppressor in breast cancer by inhibiting
+growth-related factors
+</td>
+<td style="text-align:left;">
+GSE106634
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-11-07
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE106nnn/GSE106634/suppl/GSE106634_genes.FPKM_processed_file.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE106nnn/GSE106634/suppl/GSE106634_genes.FPKM_processed_file.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNA-Seq analysis to identify novel genes associated with Neuropilin-1
+expression in the BT-474 breast cancer cell model
+</td>
+<td style="text-align:left;">
+GSE106638
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 4000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-11-07
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE106nnn/GSE106638/suppl/GSE106638_BT474-VS-Tuner.GeneDiffExpFilter.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE106nnn/GSE106638/suppl/GSE106638_BT474-VS-Tuner.GeneDiffExpFilter.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE106nnn/GSE106638/suppl/GSE106638_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE106nnn/GSE106638/suppl/GSE106638_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Characterizing steroid hormone receptor chromatin binding landscapes in
+male and female breast cancer
+</td>
+<td style="text-align:left;">
+GSE104730
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-10-09
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global modulation of signaling pathways by SARM RAD140 in AR/ER+ breast
+cancer xenografts
+</td>
+<td style="text-align:left;">
+GSE104177
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-09-25
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104177/suppl/GSE104177_comparison2_genes.summary.xlsx" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104177/suppl/GSE104177_comparison2_genes.summary.xlsx</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hypoxia-mediated translational activation of ITGB3 in breast cancer
+cells enhances TGF-β signalling and malignant features in vitro and in
+vivo 
+</td>
+<td style="text-align:left;">
+GSE104193
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-09-25
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104193/suppl/GSE104193_COUNTS_POLYSOME_01_new_pipeline.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104193/suppl/GSE104193_COUNTS_POLYSOME_01_new_pipeline.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104193/suppl/GSE104193_COUNTS_POLYSOME_02_new_pipeline.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104193/suppl/GSE104193_COUNTS_POLYSOME_02_new_pipeline.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NUPR1 depletion activates premature senescence and overcomes tamoxifen
+resistance in breast cancer cells
+</td>
+<td style="text-align:left;">
+GSE104050
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-09-20
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Development of Novel Patient Derived Xenografts from Breast Cancer Brain
+Metastases
+</td>
+<td style="text-align:left;">
+GSE104020
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-09-19
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104020/suppl/GSE104020_normalized_counts.tsv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104020/suppl/GSE104020_normalized_counts.tsv.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5hmC and gene expression data in breast cancer cell lines treated with
+an antioxidant
+</td>
+<td style="text-align:left;">
+GSE103850
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-09-14
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE103nnn/GSE103850/suppl/GSE103850_PVU_RNA_CATSKL_concordant_genes.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE103nnn/GSE103850/suppl/GSE103850_PVU_RNA_CATSKL_concordant_genes.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Metastasis in triple negative breast cancer is dependent on
+ΔNp63/CXCL2/CCL22-mediated recruitment of myeloid-derived suppressor
+cells
+</td>
+<td style="text-align:left;">
+GSE102377
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-08-08
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE102nnn/GSE102377/suppl/GSE102377_HCC1806RR_SUM1315_TPM_Table.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE102nnn/GSE102377/suppl/GSE102377_HCC1806RR_SUM1315_TPM_Table.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mitotically associated long non-coding RNA, MANCR regulates cell cycle
+in triple negative breast cancer cells 
+</td>
+<td style="text-align:left;">
+GSE102155
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 1500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-08-02
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE102nnn/GSE102155/suppl/GSE102155_MDA-MB-231_MANCR_ASO_normalized_counts.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE102nnn/GSE102155/suppl/GSE102155_MDA-MB-231_MANCR_ASO_normalized_counts.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+FGF-13 promotes metastasis in triple-negative breast cancer
+</td>
+<td style="text-align:left;">
+GSE101745
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 1500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-07-21
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101745/suppl/GSE101745_genewise-count.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101745/suppl/GSE101745_genewise-count.csv.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101745/suppl/GSE101745_genewise-tail-count.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101745/suppl/GSE101745_genewise-tail-count.csv.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101745/suppl/GSE101745_genewise-tail.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101745/suppl/GSE101745_genewise-tail.csv.gz</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP113/SRP113305" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP113/SRP113305</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+JMJD6 licenses estrogen receptor alpha-dependent enhancer RNA and coding
+gene activation by modulating CARM1/MED12 co-activator complex in breast
+cancer [Gro-Seq]
+</td>
+<td style="text-align:left;">
+GSE101560
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-07-18
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101560/suppl/GSE101560_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101560/suppl/GSE101560_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+JMJD6 licenses estrogen receptor alpha-dependent enhancer RNA and coding
+gene activation by modulating CARM1/MED12 co-activator complex in breast
+cancer
+</td>
+<td style="text-align:left;">
+GSE101562
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-07-18
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101562/suppl/GSE101562_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101562/suppl/GSE101562_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Luminal subtype-specific circRNAs in breast cancer cells by a novel tool
+for external data analysis.
+</td>
+<td style="text-align:left;">
+GSE101410
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-07-13
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101410/suppl/GSE101410_MCF-7_circRNA_Expression.xlsx" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE101nnn/GSE101410/suppl/GSE101410_MCF-7_circRNA_Expression.xlsx</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gene expression profile in breast cancer cell lines using RNA sequencing
+</td>
+<td style="text-align:left;">
+GSE100878
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-07-06
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100878/suppl/GSE100878_Breast_Cancer_cell_lines_FPKM.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100878/suppl/GSE100878_Breast_Cancer_cell_lines_FPKM.txt.gz</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP111/SRP111199" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP111/SRP111199</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Frequent miRNA-convergent fusion gene events in breast cancer
+</td>
+<td style="text-align:left;">
+GSE100769
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-07-03
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100769/suppl/GSE100769_miRBase21_counts.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100769/suppl/GSE100769_miRBase21_counts.csv.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNA-Seq analysis of breast cancer cells after shikonin treatment
+</td>
+<td style="text-align:left;">
+GSE100687
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-06-30
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100687/suppl/GSE100687_gene_FPKM.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100687/suppl/GSE100687_gene_FPKM.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Function of HNRNPC in breast cancer cells by controlling the
+dsRNA-induced interferon response
+</td>
+<td style="text-align:left;">
+GSE100451
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-06-25
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Function of HNRNPC in breast cancer cells by controlling the
+dsRNA-induced interferon response
+</td>
+<td style="text-align:left;">
+GSE100451
+</td>
+<td style="text-align:left;">
+HiSeq X Ten (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-06-25
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Discovery of naturally occurring ESR1 mutations during acquisition of
+resistance to endocrine therapy in widely used estrogen receptor
+positive breast cancer cell lines [RNA-Seq]
+</td>
+<td style="text-align:left;">
+GSE100075
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-06-15
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100075/suppl/GSE100075_cuffdiff_MCF7_gene_exp.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100075/suppl/GSE100075_cuffdiff_MCF7_gene_exp.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100075/suppl/GSE100075_cuffdiff_SUM44_gene_exp.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100075/suppl/GSE100075_cuffdiff_SUM44_gene_exp.txt.gz</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP109/SRP109286" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP109/SRP109286</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Discovery of naturally occurring ESR1 mutations during acquisition of
+resistance to endocrine therapy in widely used estrogen receptor
+positive breast cancer cell lines [RNA-Seq]
+</td>
+<td style="text-align:left;">
+GSE100075
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-06-15
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100075/suppl/GSE100075_cuffdiff_MCF7_gene_exp.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100075/suppl/GSE100075_cuffdiff_MCF7_gene_exp.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100075/suppl/GSE100075_cuffdiff_SUM44_gene_exp.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE100nnn/GSE100075/suppl/GSE100075_cuffdiff_SUM44_gene_exp.txt.gz</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP109/SRP109286" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP109/SRP109286</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Discovery of naturally occurring ESR1 mutations during acquisition of
+resistance to endocrine therapy in widely used estrogen receptor
+positive breast cancer cell lines
+</td>
+<td style="text-align:left;">
+GSE100076
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-06-15
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Discovery of naturally occurring ESR1 mutations during acquisition of
+resistance to endocrine therapy in widely used estrogen receptor
+positive breast cancer cell lines
+</td>
+<td style="text-align:left;">
+GSE100076
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-06-15
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SIRT7 Antagonizes TGF-β Signaling and Inhibits Breast Cancer Metastasis
+</td>
+<td style="text-align:left;">
+GSE99596
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-06-02
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99596/suppl/GSE99596_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99596/suppl/GSE99596_RAW.tar</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP108/SRP108472" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP108/SRP108472</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Effect of low-dose sorafenib and alkylating agents in inflammation and
+angiogenesis in breast cancer
+</td>
+<td style="text-align:left;">
+GSE99536
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-06-01
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99536/suppl/GSE99536_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99536/suppl/GSE99536_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A class of GATA3 mutation reprograms the breast cancer transcriptional
+network through gain and loss of function
+</td>
+<td style="text-align:left;">
+GSE99479
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-05-31
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP108/SRP108337" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP108/SRP108337</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_Gene_counts_per_sample.Xenograft_CRctrl.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_Gene_counts_per_sample.Xenograft_CRctrl.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.T47Dflp.vs.CR3flp.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.T47Dflp.vs.CR3flp.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.Vector.vs.ExoR330fs.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.Vector.vs.ExoR330fs.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.progesterone.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.progesterone.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_bed_files.tar.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_bed_files.tar.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_bigwig_files.tar.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_bigwig_files.tar.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_gene_counts_per_sample.RNA-seq.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_gene_counts_per_sample.RNA-seq.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_gene_counts_per_sample.RNA-seq_ProgesteroneTreatment.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_gene_counts_per_sample.RNA-seq_ProgesteroneTreatment.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A class of GATA3 mutation reprograms the breast cancer transcriptional
+network through gain and loss of function
+</td>
+<td style="text-align:left;">
+GSE99479
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-05-31
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP108/SRP108337" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP108/SRP108337</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_Gene_counts_per_sample.Xenograft_CRctrl.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_Gene_counts_per_sample.Xenograft_CRctrl.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.T47Dflp.vs.CR3flp.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.T47Dflp.vs.CR3flp.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.Vector.vs.ExoR330fs.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.Vector.vs.ExoR330fs.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.progesterone.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_RNA-seq_DEGs.progesterone.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_bed_files.tar.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_bed_files.tar.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_bigwig_files.tar.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_bigwig_files.tar.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_gene_counts_per_sample.RNA-seq.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_gene_counts_per_sample.RNA-seq.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_gene_counts_per_sample.RNA-seq_ProgesteroneTreatment.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99479/suppl/GSE99479_gene_counts_per_sample.RNA-seq_ProgesteroneTreatment.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gene repression and ChIP-seq in Human Small Cell Lung Cancer
+</td>
+<td style="text-align:left;">
+GSE99316
+</td>
+<td style="text-align:left;">
+Illumina Genome Analyzer IIx (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-05-25
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99316/suppl/GSE99316_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99316/suppl/GSE99316_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Transcriptomic analysis in breast cancer cell lines after CDK4/6
+inhibition
+</td>
+<td style="text-align:left;">
+GSE99060
+</td>
+<td style="text-align:left;">
+Ion Torrent Proton (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-05-18
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99060/suppl/GSE99060_HumanTx.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99060/suppl/GSE99060_HumanTx.txt.gz</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP107/SRP107319" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP107/SRP107319</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Selective expression of long non-coding RNAs in a breast cancer cell
+progression model
+</td>
+<td style="text-align:left;">
+GSE98393
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 1500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-05-01
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE98nnn/GSE98393/suppl/GSE98393_MCF10A-AT1_gapmer_IGFL2-AS1_Normalized_Counts.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE98nnn/GSE98393/suppl/GSE98393_MCF10A-AT1_gapmer_IGFL2-AS1_Normalized_Counts.txt.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE98nnn/GSE98393/suppl/GSE98393_MCF10A_progression_normalized_counts.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE98nnn/GSE98393/suppl/GSE98393_MCF10A_progression_normalized_counts.txt.gz</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP105/SRP105778" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP105/SRP105778</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Alternative splicing regulated by QKI and RBFOX1 promotes the
+mesenchymal cell state in breast cancer
+</td>
+<td style="text-align:left;">
+GSE98210
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-04-25
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE98nnn/GSE98210/suppl/GSE98210_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE98nnn/GSE98210/suppl/GSE98210_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cooperativity between EMT and non-EMT cells promotes breast cancer
+metastasis via paracrine GLI activation
+</td>
+<td style="text-align:left;">
+GSE97726
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-04-12
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE97nnn/GSE97726/suppl/GSE97726_xeno.exp.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE97nnn/GSE97726/suppl/GSE97726_xeno.exp.txt.gz</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP103/SRP103854" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP103/SRP103854</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Glucose impairs tamoxifen sensitivity modulating CTGF in breast cancer
+cells
+</td>
+<td style="text-align:left;">
+GSE97647
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-04-11
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP103/SRP103803" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP103/SRP103803</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE97nnn/GSE97647/suppl/GSE97647_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE97nnn/GSE97647/suppl/GSE97647_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Next Generation Sequencing Facilitates Quantitative Analysis of Wild
+Type and PVT1 Knockdown by CRISPRi in MDA-MB-231 human breast cancer
+cell line
+</td>
+<td style="text-align:left;">
+GSE97587
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 4000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-04-10
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Breast cancer cells treated with a novel KDM5 inhibitor, 5-aza-2’
+Deoxycytidine, or both.
+</td>
+<td style="text-align:left;">
+GSE97484
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-04-06
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hypoxia is a Key Driver of Alternative Splicing in Human Breast Cancer
+Cells
+</td>
+<td style="text-align:left;">
+GSE97317
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-04-03
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP102/SRP102913" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP102/SRP102913</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE97nnn/GSE97317/suppl/GSE97317_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE97nnn/GSE97317/suppl/GSE97317_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Enhancer Transcription Reveals Subtype-Specific Transcription Programs
+Controlling Breast Cancer Pathogenesis [GRO-Seq]
+</td>
+<td style="text-align:left;">
+GSE96859
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-03-21
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_76NF2V_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_76NF2V_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_76NF2V_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_76NF2V_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_AU565_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_AU565_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_AU565_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_AU565_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_HCC1937_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_HCC1937_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_HCC1937_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_HCC1937_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_HCC1954_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_HCC1954_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_HCC1954_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_HCC1954_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB231_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB231_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB231_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB231_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB361_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB361_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB361_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB361_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB436_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB436_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB436_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB436_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB468_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB468_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB468_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MB468_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MCF10A_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MCF10A_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MCF10A_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MCF10A_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MCF7_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MCF7_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MCF7_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_MCF7_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_SKBR3_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_SKBR3_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_SKBR3_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_SKBR3_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_UACC812_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_UACC812_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_UACC812_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_UACC812_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_ZR751_GROseq_Untreated_MinusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_ZR751_GROseq_Untreated_MinusStrand.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_ZR751_GROseq_Untreated_PlusStrand.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96859/suppl/GSE96859_ZR751_GROseq_Untreated_PlusStrand.bw</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP102/SRP102238" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP102/SRP102238</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Enhancer Transcription Reveals Subtype-Specific Transcription Programs
+Controlling Breast Cancer Pathogenesis
+</td>
+<td style="text-align:left;">
+GSE96867
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-03-21
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Phenotypic and microRNA characterisation of the hidden CD24+ cell
+population in MCF-7 breast cancer 3D spheroid culture
+</td>
+<td style="text-align:left;">
+GSE95598
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-03-02
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE95nnn/GSE95598/suppl/GSE95598_MCF7_24+_significant_MCF7_Parental_vs._MCF7_24+_significant_list.xlsx.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE95nnn/GSE95598/suppl/GSE95598_MCF7_24+_significant_MCF7_Parental_vs._MCF7_24+_significant_list.xlsx.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE95nnn/GSE95598/suppl/GSE95598_mcf7_parental_matureSmall_RNA_sample-1_mcf7_parental_size_grouped_on_mature.xlsx.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE95nnn/GSE95598/suppl/GSE95598_mcf7_parental_matureSmall_RNA_sample-1_mcf7_parental_size_grouped_on_mature.xlsx.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global transcriptome profiling of triple-negative breast cancer cell
+lines treated with small-molecules targeting Bromodomain and Extra
+Terminal (BET) proteins
+</td>
+<td style="text-align:left;">
+GSE95375
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-02-25
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE95nnn/GSE95375/suppl/GSE95375_LBAI_WANG_BC_CR2017.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE95nnn/GSE95375/suppl/GSE95375_LBAI_WANG_BC_CR2017.csv.gz</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP100/SRP100726" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP100/SRP100726</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+KDM4 inhibition targets breast cancer stem cells [RNA-Seq]
+</td>
+<td style="text-align:left;">
+GSE95293
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-02-23
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+KDM4 inhibition targets breast cancer stem cells
+</td>
+<td style="text-align:left;">
+GSE95294
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-02-23
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Systematic Functional Perturbations Uncover a Prognostic Genetic Network
+Driving Human Breast Cancer [RNA-Seq]
+</td>
+<td style="text-align:left;">
+GSE95304
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-02-23
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP100/SRP100645" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP100/SRP100645</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE95nnn/GSE95304/suppl/GSE95304_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE95nnn/GSE95304/suppl/GSE95304_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Systematic Functional Perturbations Uncover a Prognostic Genetic Network
+Driving Human Breast Cancer
+</td>
+<td style="text-align:left;">
+GSE95305
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-02-23
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE95nnn/GSE95305/suppl/GSE95305_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE95nnn/GSE95305/suppl/GSE95305_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+The effect of Abl kinases,or Ponatinib challenging on breast cancer
+cells’ global transcriptome
+</td>
+<td style="text-align:left;">
+GSE95079
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-02-20
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Robust Stratification of Breast Cancer Subtypes
+</td>
+<td style="text-align:left;">
+GSE94899
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-02-14
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE94nnn/GSE94899/suppl/GSE94899_BrCa.trxFpkmTables.v4.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE94nnn/GSE94899/suppl/GSE94899_BrCa.trxFpkmTables.v4.txt.gz</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ChIPseq and RNAseq of ER mutant breast cancer cell lines
+</td>
+<td style="text-align:left;">
+GSE94493
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-02-03
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP098/SRP098916" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP098/SRP098916</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE94nnn/GSE94493/suppl/GSE94493_ER_Mutants_Cufflinks_Gene_Counts.csv.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE94nnn/GSE94493/suppl/GSE94493_ER_Mutants_Cufflinks_Gene_Counts.csv.gz</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE94nnn/GSE94493/suppl/GSE94493_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE94nnn/GSE94493/suppl/GSE94493_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UBR7 is a novel E3 ubiquitin ligase for H2BK120 and acts as a
+tumor-suppressor in breast cancer [RNA-Seq]
+</td>
+<td style="text-align:left;">
+GSE93758
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-01-18
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_Control_merged_FS.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_Control_merged_FS.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_Control_merged_RS.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_Control_merged_RS.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_CountData_AllGenes.xlsx" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_CountData_AllGenes.xlsx</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_CountData_DifferentialGenes.xlsx" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_CountData_DifferentialGenes.xlsx</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_UBR7-shRNA_merged_FS.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_UBR7-shRNA_merged_FS.bw</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_UBR7-shRNA_merged_RS.bw" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93758/suppl/GSE93758_UBR7-shRNA_merged_RS.bw</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UBR7 is a novel E3 ubiquitin ligase for H2BK120 and acts as a
+tumor-suppressor in breast cancer
+</td>
+<td style="text-align:left;">
+GSE93759
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-01-18
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93759/suppl/GSE93759_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93759/suppl/GSE93759_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+FOXN3 Enlists NEAT1-containing SIN3A Complex to Regulate Mammary
+Epithelium Differentiation and Promote Breast Cancer Metastasis
+</td>
+<td style="text-align:left;">
+GSE93781
+</td>
+<td style="text-align:left;">
+BGISEQ-500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-01-18
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Regulation of miRNA-29c and its downstream pathways in preneoplastic
+progression of triple negative breast cancer
+</td>
+<td style="text-align:left;">
+GSE93740
+</td>
+<td style="text-align:left;">
+Illumina Genome Analyzer II (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-01-17
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93740/suppl/GSE93740_bedrosian-mirna.exact4.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93740/suppl/GSE93740_bedrosian-mirna.exact4.txt.gz</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP096/SRP096915" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP096/SRP096915</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WT1 expression in breast cancer disrupts the epithelial/mesenchymal
+balance of tumour cells and correlates with the metabolic response to
+docetaxel
+</td>
+<td style="text-align:left;">
+GSE93636
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2000 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-01-15
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93636/suppl/GSE93636_MDA157_untreated_transcriptome_significant_regulation.txt.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93636/suppl/GSE93636_MDA157_untreated_transcriptome_significant_regulation.txt.gz</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP096/SRP096784" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP096/SRP096784</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gene Expression of Breast Cancer Cell Lines Across Biomaterial Platforms
+</td>
+<td style="text-align:left;">
+GSE93562
+</td>
+<td style="text-align:left;">
+Illumina NextSeq 500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-01-12
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93562/suppl/GSE93562_genes.fpkm_tracking.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93562/suppl/GSE93562_genes.fpkm_tracking.gz</a>;
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP096/SRP096654" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP096/SRP096654</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Patient-derived luminal breast cancer xenografts with progestins
+</td>
+<td style="text-align:left;">
+GSE93109
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-01-04
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93109/suppl/GSE93109_RAW.tar" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93109/suppl/GSE93109_RAW.tar</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RNAseq analysis of patient-derived luminal breast cancer xenografts
+treated with progestins
+</td>
+<td style="text-align:left;">
+GSE93057
+</td>
+<td style="text-align:left;">
+Illumina HiSeq 2500 (Homo sapiens)
+</td>
+<td style="text-align:left;">
+2017-01-03
+</td>
+<td style="text-align:left;">
+<a href="ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP095/SRP095932" class="uri">ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP095/SRP095932</a>;
+<a href="ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93057/suppl/GSE93057_isoforms.fpkm_tracking.gz" class="uri">ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE93nnn/GSE93057/suppl/GSE93057_isoforms.fpkm_tracking.gz</a>
 </td>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>num_platforms &lt;- dbGetQuery(con,&#39;select count(*) from gpl&#39;)
-num_platforms</code></pre>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["count(*)"],"name":[1],"type":["int"],"align":["right"]}],"data":[{"1":"1433"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-<pre class="r"><code>dbListFields(con,&#39;gpl&#39;)</code></pre>
-<pre><code>##  [1] &quot;ID&quot;                   &quot;title&quot;                &quot;gpl&quot;                 
-##  [4] &quot;status&quot;               &quot;submission_date&quot;      &quot;last_update_date&quot;    
-##  [7] &quot;technology&quot;           &quot;distribution&quot;         &quot;organism&quot;            
-## [10] &quot;manufacturer&quot;         &quot;manufacture_protocol&quot; &quot;coating&quot;             
-## [13] &quot;catalog_number&quot;       &quot;support&quot;              &quot;description&quot;         
-## [16] &quot;web_link&quot;             &quot;contact&quot;              &quot;data_row_count&quot;      
-## [19] &quot;supplementary_file&quot;   &quot;bioc_package&quot;</code></pre>
-<pre class="r"><code>uniq_tech &lt;- dbGetQuery(con,&#39;select distinct technology 
-                        from gpl&#39;)
-nrow(uniq_tech)</code></pre>
-<pre><code>## [1] 7</code></pre>
+<p>get the data</p>
+<pre class="r"><code>sfiles = getGEOSuppFiles(&#39;GSE119827&#39;)</code></pre>
+<pre class="r"><code>library(readr)
+GSE119827_Cuff_Gene_Counts &lt;- read_csv(&quot;GSE119827/GSE119827_Cuff_Gene_Counts.csv&quot;)</code></pre>
+<pre><code>## New names:
+## Rows: 25365 Columns: 11
+## ── Column specification
+## ──────────────────────────────────────────────────────── Delimiter: &quot;,&quot; chr
+## (1): Gene_ID dbl (8): AJ1, AJ2, AJ3, AJ4, AJ5, AJ6, avg-con, avg-si2 lgl (2):
+## ...8, ...9
+## ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+## Specify the column types or set `show_col_types = FALSE` to quiet this message.
+## • `` -&gt; `...8`
+## • `` -&gt; `...9`</code></pre>
 <p>Disconnect from the database:</p>
-<pre class="r"><code>dbDisconnect(con)</code></pre>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body">
+<div id="ref-detargeting" class="csl-entry">
+1. Jiao AL UN Perales R: <strong>Human nuclear RNAi-defective 2 (NRDE2)
+is an essential RNA splicing factor.</strong> <em>RNA (New York,
+NY)</em> 2019, <strong>25</strong>:352–363.
+</div>
+<div id="ref-R-base" class="csl-entry">
+2. R Core Team: <em><a href="https://www.R-project.org">R: A Language
+and Environment for Statistical Computing</a></em>. Vienna, Austria: R
+Foundation for Statistical Computing; 2019.
+</div>
+</div>
+</div>
 
 
 
