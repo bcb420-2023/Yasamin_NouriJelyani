@@ -23,54 +23,49 @@ if( !file.exists("GEOmetadb.sqlite") ) {
     
 }
 
-
 file.info(demo_sqlfile)
-```
 
-
-Then, I made the connection to the database:
-```{r}
 con <- dbConnect(SQLite(), demo_sqlfile)
-geo_tables <- dbListTables(con)
-geo_tables
 
-dbListFields(con,'gse')
-
-
-dbGetQuery(con,'PRAGMA TABLE_INFO(gpl)')
-
-
-rs <- dbGetQuery(con,'select * from gse limit 5')
-rs[,1:7]
-
-
-rs <- dbGetQuery(con,paste("select gse,title from gse where",
-                           "contributor like '%Sean%Davis%'",sep=" "))
-rs
 ```
+
 
 
 ```{r}
-geo_tables <- dbListTables(con)
-geo_tables
+sql <- paste("SELECT DISTINCT gse.title,gse.gse, gpl.title,",
+             " gse.submission_date,",
+             " gse.supplementary_file", #<<
+             "FROM",
+             "  gse JOIN gse_gpl ON gse_gpl.gse=gse.gse",
+             "  JOIN gpl ON gse_gpl.gpl=gpl.gpl",
+             "WHERE",
+             "  gse.submission_date > '2017-01-01' AND",
+             "  gse.title LIKE '%cancer%' AND", 
+             "  gpl.organism LIKE '%Homo sapiens%' AND",
+             "  gpl.technology LIKE '%high-throughput sequencing%' ",
+             "  ORDER BY gse.submission_date DESC",sep=" ")
 
-dbListFields(con,'gse')
+rs <- dbGetQuery(con,sql)
+counts_files <- rs$supplementary_file[grep(rs$supplementary_file,
+                              pattern = "count|cnt",ignore.case = TRUE)]
 
+series_of_interest <- rs$gse[grep(rs$supplementary_file,
+                              pattern = "count|cnt",ignore.case = TRUE)]
 
-results <- dbGetQuery(con,'select * from gpl limit 5')
-knitr::kable(head(results[,1:5]), format = "html")
-
-num_platforms <- dbGetQuery(con,'select count(*) from gpl')
-num_platforms
-
-dbListFields(con,'gpl')
-
-uniq_tech <- dbGetQuery(con,'select distinct technology 
-                        from gpl')
-nrow(uniq_tech)
+shortened_filenames <- unlist(lapply(counts_files,
+              FUN = function(x){x <- unlist(strsplit(x,";")) ;
+              x <- x[grep(x,pattern= "count|cnt",ignore.case = TRUE)];
+                tail(unlist(strsplit(x,"/")),n=1)}))
+shortened_filenames[1:10]
+rs <- dbGetQuery(con,sql)
+ knitr::kable(rs, format = "html")
 
 ```
 
+get the data
+```{r}
+sfiles = getGEOSuppFiles('GSE119827')
+```
 
 
 Disconnect from the database:
