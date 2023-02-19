@@ -14,7 +14,7 @@ nocite: '@*'
 # Finding the Expression Dataset
 
 First, I downloaded the GEOmetaDB, and got access to the meta data:
-```{r warning=FALSE}
+```{r eval=FALSE}
 
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
@@ -23,6 +23,7 @@ if (!requireNamespace("GEOmetadb", quietly = TRUE))
     BiocManager::install("GEOmetadb")
 
 library(GEOmetadb)
+library(GEOquery)
 
 if( !file.exists("GEOmetadb.sqlite") ) {
     demo_sqlfile <- getSQLiteFile(destdir = getwd(), destfile = "GEOmetadb.sqlite.gz", type = "demo")
@@ -39,7 +40,7 @@ con <- dbConnect(SQLite(), demo_sqlfile)
 
 
 
-```{r warning=FALSE}
+```{r eval=FALSE}
 sql <- paste("SELECT DISTINCT gse.title,gse.gse, gpl.title,",
              " gse.submission_date,",
              " gse.supplementary_file", #<<
@@ -72,18 +73,161 @@ rs <- dbGetQuery(con,sql)
 
 get the data
 ```{r eval=FALSE}
-sfiles = getGEOSuppFiles('GSE119827')
+sfiles = getGEOSuppFiles('GSE117452')
 ```
 
+
+
+Geo Description of dataset
+```{r message=FALSE}
+gse <- GEOquery::getGEO("GSE117452",GSEMatrix=FALSE)
+
+knitr::kable(data.frame(head(GEOquery::Meta(gse))), format = "html")
+```
+
+Platform title:
+```{r}
+current_gpl <- names(GEOquery::GPLList(gse))[1]
+current_gpl_info <- GEOquery::Meta(GEOquery::getGEO(current_gpl))
+current_gpl_info$title
+```
+
+
+```{r}
+current_gpl_info$last_update_date
+```
+
+
+```{r}
+current_gpl_info$organism
+```
+Getting the expression data
+```{r}
+sfiles = GEOquery::getGEOSuppFiles('GSE117452')
+
+fnames = rownames(sfiles)
+
+#69 columns, there are 68 samples (58 breast cancer patients 
+#(29 AA and 29 EA women) and 10 (5 AA and 5 EA) healthy women.)
+
+#589 rows (Genes) differentially expressed microRNA
+
+ca125_exp = read.delim(fnames[1],header=TRUE, check.names = FALSE)
+
+
+knitr::kable(ca125_exp[1:15,1:5], format = "html")
+```
+
+cleaning the data
+
+```{r}
+dim(ca125_exp)
+
+colnames(ca125_exp)
+```
+
+```{r}
+samples <- data.frame(lapply(colnames(ca125_exp)[3:22], 
+        FUN=function(x){unlist(strsplit(x, 
+                        split = "\\."))[c(2,3)]}))
+colnames(samples) <- colnames(ca125_exp)[3:22]
+rownames(samples) <- c("patients","cell_type")
+samples <- data.frame(t(samples))
+```
+
+```{r}
+summarized_gene_counts <- sort(table(ca125_exp$gname),
+                               decreasing = TRUE)
+```
+
+```{r}
+knitr::kable(table(ca125_exp$gname)[1:3], format="html")
+```
+
+```{r}
+#translate out counts into counts per million using 
+#the edgeR package function cpm
+cpms = edgeR::cpm(ca125_exp[,3:22])
+rownames(cpms) <- ca125_exp[,1]
+# get rid of low counts
+keep = rowSums(cpms >1) >=10
+ca125_exp_filtered = ca125_exp[keep,]
+```
+
+```{r}
+dim(ca125_exp_filtered)
+```
+```{r echo=FALSE}
+#summarized_gene_counts_filtered <- sort(table(ca125_exp_filtered$gnam, decreasing = TRUE))
+```
+```{r echo=FALSE}
+#knitr::kable(summarized_gene_counts_filtered[
+#  which(summarized_gene_counts_filtered>1)[1:10]], 
+#  format="html")
+```
 
 ```{r warning=FALSE}
-library(readr)
-GSE119827_Cuff_Gene_Counts <- read_csv("GSE119827/GSE119827_Cuff_Gene_Counts.csv")
+data2plot <- log2(edgeR::cpm(ca125_exp_filtered[,3:22]))
+boxplot(data2plot, xlab = "Samples", ylab = "log2 CPM", 
+        las = 2, cex = 0.5, cex.lab = 0.5,
+        cex.axis = 0.5, main = "CA125 RNASeq Samples")
+#draw the median on each box plot
+abline(h = median(apply(data2plot, 2, median)), 
+       col = "green", lwd = 0.6, lty = "dashed")
 ```
+
+
+```{r}
+counts_density <- apply(log2(edgeR::cpm(ca125_exp_filtered[,3:22])), 
+                        2, density)
+  #calculate the limits across all the samples
+    xlim <- 0; ylim <- 0
+    for (i in 1:length(counts_density)) {
+      xlim <- range(c(xlim, counts_density[[i]]$x)); 
+      ylim <- range(c(ylim, counts_density[[i]]$y))
+    }
+    cols <- rainbow(length(counts_density))
+    ltys <- rep(1, length(counts_density))
+    #plot the first density plot to initialize the plot
+    plot(counts_density[[1]], xlim=xlim, ylim=ylim, type="n", 
+         ylab="Smoothing density of log2-CPM", 
+         main="", cex.lab = 0.85)
+    #plot each line
+    for (i in 1:length(counts_density)) 
+      lines(counts_density[[i]], col=cols[i], lty=ltys[i])
+    #create legend
+    legend("topright", colnames(data2plot),  
+           col=cols, lty=ltys, cex=0.75, 
+           border ="blue",  text.col = "green4", 
+           merge = TRUE, bg = "gray90")
+```
+```{r}
+limma::plotMA(log2(ca125_exp[,c(3,4)]), ylab="M - ratio log expression", 
+       main="CA125 + vs - - example")
+```
+```{r}
+filtered_data_matrix <- as.matrix(ca125_exp_filtered[,3:22])
+rownames(filtered_data_matrix) <- ca125_exp_filtered$ensembl75_id
+d = edgeR::DGEList(counts=filtered_data_matrix, group=samples$cell_type)
+```
+
+```{r}
+d = edgeR::calcNormFactors(d)
+```
+
+```{r}
+normalized_counts <- edgeR::cpm(d)
+```
+
+```{r}
+limma::plotMDS(d, labels=rownames(samples),
+  col = c("darkgreen","blue")[factor(samples$cell_type)])
+```
+
 
 
 Disconnect from the database:
-```{r echo=FALSE}
+```{r eval=FALSE}
 
 dbDisconnect(con)
 
