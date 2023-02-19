@@ -11,7 +11,11 @@ csl: biomed-central.csl
 nocite: '@*'
 ---
 
-# Finding the Expression Dataset
+#Introduction
+
+A summary of the paper and datasets
+
+# Download the Data
 
 First, I downloaded the GEOmetaDB, and got access to the meta data:
 ```{r eval=FALSE}
@@ -22,8 +26,16 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 if (!requireNamespace("GEOmetadb", quietly = TRUE))
     BiocManager::install("GEOmetadb")
 
+if(!requireNamespace("knitr", quietly=TRUE))
+  install.packages("knitr")
+
+if(! requireNamespace("edgeR", quietly=TRUE))
+  BiocManager::install("edgeR")
+
+if (!requireNamespace("GEOquery", quietly=TRUE))
+  BiocManager::install("GEOquery")
+
 library(GEOmetadb)
-library(GEOquery)
 
 if( !file.exists("GEOmetadb.sqlite") ) {
     demo_sqlfile <- getSQLiteFile(destdir = getwd(), destfile = "GEOmetadb.sqlite.gz", type = "demo")
@@ -38,8 +50,7 @@ con <- dbConnect(SQLite(), demo_sqlfile)
 
 ```
 
-
-
+Query of the database:
 ```{r eval=FALSE}
 sql <- paste("SELECT DISTINCT gse.title,gse.gse, gpl.title,",
              " gse.submission_date,",
@@ -67,18 +78,26 @@ shortened_filenames <- unlist(lapply(counts_files,
                 tail(unlist(strsplit(x,"/")),n=1)}))
 shortened_filenames[1:10]
 rs <- dbGetQuery(con,sql)
- knitr::kable(rs, format = "html")
+knitr::kable(rs, format = "html")
 
 ```
 
-get the data
-```{r eval=FALSE}
-sfiles = getGEOSuppFiles('GSE117452')
+Open the data:
+```{r message=FALSE}
+sfiles = GEOquery::getGEOSuppFiles('GSE117452')
+
+#if the file exists, open it
+fnames <- "GSE117452/GSE117452_expn_matrix_mimat.txt.gz"
+if (! file.exists(fnames)){
+  gse <- GEOquery::getGEO("GSE117452", GSEMatrix=FALSE)
+  sfiles = GEOquery::getGEOSuppFiles("GSE117452")
+  fnames = rownames(sfiles)
+}
 ```
 
 
 
-Geo Description of dataset
+Geo Description of dataset:
 ```{r message=FALSE}
 gse <- GEOquery::getGEO("GSE117452",GSEMatrix=FALSE)
 
@@ -102,7 +121,7 @@ current_gpl_info$last_update_date
 current_gpl_info$organism
 ```
 Getting the expression data
-```{r}
+```{r message=FALSE}
 sfiles = GEOquery::getGEOSuppFiles('GSE117452')
 
 fnames = rownames(sfiles)
@@ -119,35 +138,37 @@ knitr::kable(ca125_exp[1:15,1:5], format = "html")
 ```
 
 cleaning the data
-
 ```{r}
 dim(ca125_exp)
 
 colnames(ca125_exp)
 ```
 
+#Assess the data:
+The data does not have duplicates.
 ```{r}
-samples <- data.frame(lapply(colnames(ca125_exp)[3:22], 
-        FUN=function(x){unlist(strsplit(x, 
-                        split = "\\."))[c(2,3)]}))
-colnames(samples) <- colnames(ca125_exp)[3:22]
-rownames(samples) <- c("patients","cell_type")
-samples <- data.frame(t(samples))
+num_samples <- dim(ca125_exp)[2] - 1 # The number of rows correspond to the number of columns minus 1 for the gene name colummn 68
+num_genes <- dim(ca125_exp)[1] # The number of genes analysed 2576 genes
+num_unique_genes <- length(unique(ca125_exp$Gene)) # How many unique genes are measured: 2576
+num_lack_identifier <- sum(is.na(ca125_exp$Gene)) # How many rows do not have an gene identifier: 0
+
 ```
 
+There are no repetative genes.
+
 ```{r}
-summarized_gene_counts <- sort(table(ca125_exp$gname),
+summarized_gene_counts <- sort(table(ca125_exp$Gene),
                                decreasing = TRUE)
 ```
 
 ```{r}
-knitr::kable(table(ca125_exp$gname)[1:3], format="html")
+knitr::kable(table(ca125_exp$Gene)[1:3], format="html")
 ```
 
 ```{r}
 #translate out counts into counts per million using 
 #the edgeR package function cpm
-cpms = edgeR::cpm(ca125_exp[,3:22])
+cpms = edgeR::cpm(ca125_exp[,2:ncol(ca125_exp)])
 rownames(cpms) <- ca125_exp[,1]
 # get rid of low counts
 keep = rowSums(cpms >1) >=10
@@ -157,17 +178,11 @@ ca125_exp_filtered = ca125_exp[keep,]
 ```{r}
 dim(ca125_exp_filtered)
 ```
-```{r echo=FALSE}
-#summarized_gene_counts_filtered <- sort(table(ca125_exp_filtered$gnam, decreasing = TRUE))
-```
-```{r echo=FALSE}
-#knitr::kable(summarized_gene_counts_filtered[
-#  which(summarized_gene_counts_filtered>1)[1:10]], 
-#  format="html")
-```
+# Mapping
 
 ```{r warning=FALSE}
-data2plot <- log2(edgeR::cpm(ca125_exp_filtered[,3:22]))
+# do not have space for all 
+data2plot <- log2(edgeR::cpm(ca125_exp_filtered[,2:20]))
 boxplot(data2plot, xlab = "Samples", ylab = "log2 CPM", 
         las = 2, cex = 0.5, cex.lab = 0.5,
         cex.axis = 0.5, main = "CA125 RNASeq Samples")
@@ -177,8 +192,9 @@ abline(h = median(apply(data2plot, 2, median)),
 ```
 
 
+
 ```{r}
-counts_density <- apply(log2(edgeR::cpm(ca125_exp_filtered[,3:22])), 
+counts_density <- apply(log2(edgeR::cpm(ca125_exp_filtered[,2:ncol(ca125_exp)])), 
                         2, density)
   #calculate the limits across all the samples
     xlim <- 0; ylim <- 0
@@ -205,25 +221,6 @@ counts_density <- apply(log2(edgeR::cpm(ca125_exp_filtered[,3:22])),
 limma::plotMA(log2(ca125_exp[,c(3,4)]), ylab="M - ratio log expression", 
        main="CA125 + vs - - example")
 ```
-```{r}
-filtered_data_matrix <- as.matrix(ca125_exp_filtered[,3:22])
-rownames(filtered_data_matrix) <- ca125_exp_filtered$ensembl75_id
-d = edgeR::DGEList(counts=filtered_data_matrix, group=samples$cell_type)
-```
-
-```{r}
-d = edgeR::calcNormFactors(d)
-```
-
-```{r}
-normalized_counts <- edgeR::cpm(d)
-```
-
-```{r}
-limma::plotMDS(d, labels=rownames(samples),
-  col = c("darkgreen","blue")[factor(samples$cell_type)])
-```
-
 
 
 Disconnect from the database:
