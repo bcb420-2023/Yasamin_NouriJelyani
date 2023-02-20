@@ -97,6 +97,8 @@ if (! file.exists(fnames)){
 
 
 
+
+
 Geo Description of dataset:
 ```{r message=FALSE}
 gse <- GEOquery::getGEO("GSE117452",GSEMatrix=FALSE)
@@ -148,7 +150,7 @@ colnames(ca125_exp)
 The data does not have duplicates.
 ```{r}
 num_samples <- dim(ca125_exp)[2] - 1 # The number of rows correspond to the number of columns minus 1 for the gene name colummn 68
-num_genes <- dim(ca125_exp)[1] # The number of genes analysed 2576 genes
+num_genes <- dim(ca125_exp)[1] # The number of genes analysed 2576 genes from the microRNA
 num_unique_genes <- length(unique(ca125_exp$Gene)) # How many unique genes are measured: 2576
 num_lack_identifier <- sum(is.na(ca125_exp$Gene)) # How many rows do not have an gene identifier: 0
 
@@ -179,6 +181,12 @@ ca125_exp_filtered = ca125_exp[keep,]
 dim(ca125_exp_filtered)
 ```
 # Mapping
+
+miRBase assigns each microRNA stem‐loop sequence a symbol in the format “mir‐#” and each mature miRNA a symbol in the format “miR‐#” followed by a unique sequential number that reflects order of submission to the database. The HGNC then approves a gene symbol for human miRNA genes in the format MIR#; for example, MIR17 represents the miRNA gene, mir‐17 represents the stem‐loop, and miR‐17 represents the mature miRNA.
+
+https://www.genenames.org/about/guidelines/ 
+
+https://www.mirbase.org/
 
 ```{r warning=FALSE}
 # do not have space for all 
