@@ -1649,15 +1649,32 @@ display: none;
 
 <div id="TOC">
 <ul>
+<li><a href="#introduction" id="toc-introduction">Introduction</a></li>
 <li><a href="#download-the-data" id="toc-download-the-data">Download the
-Data</a></li>
+Data</a>
+<ul>
+<li><a href="#geo-description-of-dataset" id="toc-geo-description-of-dataset">Geo Description of dataset:</a></li>
+</ul></li>
 <li><a href="#mapping" id="toc-mapping">Mapping</a></li>
 <li><a href="#references" id="toc-references">References</a></li>
 </ul>
 </div>
 
-<p>#Introduction</p>
-<p>A summary of the paper and datasets</p>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Women of African American (AA) ancestry are know to have more risk of
+being diagnosed with ER-/TN(triple negative) breast cancer, as compared
+to women in European American (EA) ancestry. This study looks at a
+number of differentially expressed microRNA (DEmiRs) to identify miRNA
+patterns that are potential biomarkers of this disease. This study found
+that out of the 102 ER-subtype related DemiRs, majority of them were
+specific to the race, and only 23 were common between the races (1).
+Hence, there are subsets of microRNA that are differentially expressed
+between EA and AA women. This information help with better targetted
+treatment of this type of cancer.</p>
+<p>Tissue samples: 58 Breast cancer patient (29 AA, 29 EA) 10 healthy
+women (5 AA, 5 EA)</p>
+</div>
 <div id="download-the-data" class="section level1">
 <h1>Download the Data</h1>
 <p>First, I downloaded the GEOmetaDB, and got access to the meta
@@ -1677,7 +1694,13 @@ if(! requireNamespace(&quot;edgeR&quot;, quietly=TRUE))
 if (!requireNamespace(&quot;GEOquery&quot;, quietly=TRUE))
   BiocManager::install(&quot;GEOquery&quot;)
 
+if (!requireNamespace(&quot;biomaRt&quot;, quietly = TRUE)){
+  install.packages(&quot;biomaRt&quot;)}
+
+
 library(GEOmetadb)
+library(biomaRt)
+
 
 if( !file.exists(&quot;GEOmetadb.sqlite&quot;) ) {
     demo_sqlfile &lt;- getSQLiteFile(destdir = getwd(), destfile = &quot;GEOmetadb.sqlite.gz&quot;, type = &quot;demo&quot;)
@@ -1698,7 +1721,7 @@ con &lt;- dbConnect(SQLite(), demo_sqlfile)</code></pre>
              &quot;  JOIN gpl ON gse_gpl.gpl=gpl.gpl&quot;,
              &quot;WHERE&quot;,
              &quot;  gse.submission_date &gt; &#39;2017-01-01&#39; AND&quot;,
-             &quot;  gse.title LIKE &#39;%cancer%&#39; AND&quot;, 
+             &quot;  gse.title LIKE &#39;%breast%&#39; AND&quot;, 
              &quot;  gpl.organism LIKE &#39;%Homo sapiens%&#39; AND&quot;,
              &quot;  gpl.technology LIKE &#39;%high-throughput sequencing%&#39; &quot;,
              &quot;  ORDER BY gse.submission_date DESC&quot;,sep=&quot; &quot;)
@@ -1727,7 +1750,8 @@ if (! file.exists(fnames)){
   sfiles = GEOquery::getGEOSuppFiles(&quot;GSE117452&quot;)
   fnames = rownames(sfiles)
 }</code></pre>
-<p>Geo Description of dataset:</p>
+<div id="geo-description-of-dataset" class="section level2">
+<h2>Geo Description of dataset:</h2>
 <pre class="r"><code>gse &lt;- GEOquery::getGEO(&quot;GSE117452&quot;,GSEMatrix=FALSE)
 
 knitr::kable(data.frame(head(GEOquery::Meta(gse))), format = &quot;html&quot;)</code></pre>
@@ -1779,13 +1803,13 @@ Roswell Park Comprehensive Cancer Center
 </table>
 <p>Platform title:</p>
 <pre class="r"><code>current_gpl &lt;- names(GEOquery::GPLList(gse))[1]
-current_gpl_info &lt;- GEOquery::Meta(GEOquery::getGEO(current_gpl))
-current_gpl_info$title</code></pre>
-<pre><code>## [1] &quot;Illumina HiSeq 2500 (Homo sapiens)&quot;</code></pre>
-<pre class="r"><code>current_gpl_info$last_update_date</code></pre>
-<pre><code>## [1] &quot;Mar 27 2019&quot;</code></pre>
-<pre class="r"><code>current_gpl_info$organism</code></pre>
-<pre><code>## [1] &quot;Homo sapiens&quot;</code></pre>
+current_gpl_info &lt;- GEOquery::Meta(GEOquery::getGEO(current_gpl))</code></pre>
+<p><strong>Platform title:</strong> Illumina HiSeq 2500 (Homo
+sapiens)<br /> <strong>Submission data:</strong>Mar 14 2013 <br />
+<strong>Last Update data:</strong> Mar 27 2019 <br />
+<strong>Organism:</strong> Homo sapiens <br /> <strong>Number of GEO
+datasets using this technology:</strong> 10523 <br /> <strong>Number of
+GEO samples that use this technology:</strong>300754<br /></p>
 <p>Getting the expression data</p>
 <pre class="r"><code>sfiles = GEOquery::getGEOSuppFiles(&#39;GSE117452&#39;)
 
@@ -1796,10 +1820,11 @@ fnames = rownames(sfiles)
 
 #589 rows (Genes) differentially expressed microRNA
 
-ca125_exp = read.delim(fnames[1],header=TRUE, check.names = FALSE)
+
+ca125_exp = read.delim(fnames[1],header=TRUE, check.names = FALSE) #not correct col names
 
 
-knitr::kable(ca125_exp[1:15,1:5], format = &quot;html&quot;)</code></pre>
+knitr::kable(ca125_exp[1:5,1:5], format = &quot;html&quot;)</code></pre>
 <table>
 <thead>
 <tr>
@@ -1906,176 +1931,6 @@ hsa-let-7b.MIMAT0004482
 71
 </td>
 </tr>
-<tr>
-<td style="text-align:left;">
-hsa-let-7c.MIMAT0000064
-</td>
-<td style="text-align:right;">
-5094
-</td>
-<td style="text-align:right;">
-2170
-</td>
-<td style="text-align:right;">
-1652
-</td>
-<td style="text-align:right;">
-4920
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-hsa-let-7c.MIMAT0026472
-</td>
-<td style="text-align:right;">
-31
-</td>
-<td style="text-align:right;">
-12
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:right;">
-19
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-hsa-let-7d.MIMAT0000065
-</td>
-<td style="text-align:right;">
-2460
-</td>
-<td style="text-align:right;">
-8808
-</td>
-<td style="text-align:right;">
-3409
-</td>
-<td style="text-align:right;">
-3250
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-hsa-let-7d.MIMAT0004484
-</td>
-<td style="text-align:right;">
-582
-</td>
-<td style="text-align:right;">
-1084
-</td>
-<td style="text-align:right;">
-594
-</td>
-<td style="text-align:right;">
-424
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-hsa-let-7e.MIMAT0000066
-</td>
-<td style="text-align:right;">
-2721
-</td>
-<td style="text-align:right;">
-4198
-</td>
-<td style="text-align:right;">
-3207
-</td>
-<td style="text-align:right;">
-3730
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-hsa-let-7e.MIMAT0004485
-</td>
-<td style="text-align:right;">
-54
-</td>
-<td style="text-align:right;">
-72
-</td>
-<td style="text-align:right;">
-56
-</td>
-<td style="text-align:right;">
-48
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-hsa-let-7f-1.MIMAT0004486
-</td>
-<td style="text-align:right;">
-20
-</td>
-<td style="text-align:right;">
-103
-</td>
-<td style="text-align:right;">
-29
-</td>
-<td style="text-align:right;">
-17
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-hsa-let-7f-2.MIMAT0004487
-</td>
-<td style="text-align:right;">
-11
-</td>
-<td style="text-align:right;">
-133
-</td>
-<td style="text-align:right;">
-97
-</td>
-<td style="text-align:right;">
-32
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-hsa-let-7f.MIMAT0000067
-</td>
-<td style="text-align:right;">
-83037
-</td>
-<td style="text-align:right;">
-141194
-</td>
-<td style="text-align:right;">
-110199
-</td>
-<td style="text-align:right;">
-105297
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-hsa-let-7g.MIMAT0000414
-</td>
-<td style="text-align:right;">
-81755
-</td>
-<td style="text-align:right;">
-104988
-</td>
-<td style="text-align:right;">
-156536
-</td>
-<td style="text-align:right;">
-73219
-</td>
-</tr>
 </tbody>
 </table>
 <p>cleaning the data</p>
@@ -2145,11 +2000,12 @@ hsa-let-7a.MIMAT0004481
 #the edgeR package function cpm
 cpms = edgeR::cpm(ca125_exp[,2:ncol(ca125_exp)])
 rownames(cpms) &lt;- ca125_exp[,1]
-# get rid of low counts
-keep = rowSums(cpms &gt;1) &gt;=10
+# get rid of low counts to remove potential outliers
+keep = rowSums(cpms &gt;1) &gt;=10 # 10 is the min number of samples in healthy group
 ca125_exp_filtered = ca125_exp[keep,]</code></pre>
 <pre class="r"><code>dim(ca125_exp_filtered)</code></pre>
 <pre><code>## [1] 810  69</code></pre>
+</div>
 </div>
 <div id="mapping" class="section level1">
 <h1>Mapping</h1>
