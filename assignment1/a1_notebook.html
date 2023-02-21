@@ -1685,10 +1685,10 @@ Hence, there are subsets of microRNA that are differentially expressed
 between EA and AA women. This information help with better targetted
 treatment of this type of cancer.</p>
 <p>Tissue samples: 58 Breast cancer patient (29 AA, 29 EA) 10 healthy
-women (5 AA, 5 EA)</p>
-<p><strong>Question1: What are the control and test conditions of the
-dataset?</strong> <br /> Control condition: Healthy female breast tissue,
-for both AA and EA decent individuals <br /></p>
+women (5 AA, 5 EA) <br /> <strong>Question1: What are the control and
+test conditions of the dataset?</strong> <br /> Control condition:
+Healthy female breast tissue, for both AA and EA decent individuals
+<br /></p>
 <p>test condition: Breast cancer breast tissue for both ER+ and ER-
 cancer types and for for AA and EA decent patients. <br /></p>
 <p><strong>Question2: Why us the dataset of interest to you?</strong>
@@ -1728,13 +1728,17 @@ if (!requireNamespace(&quot;biomaRt&quot;, quietly = TRUE)){
 if (!require(&quot;BiocManager&quot;, quietly = TRUE))
     install.packages(&quot;BiocManager&quot;)
 
-if (!require(&quot;BiocManager&quot;, quietly = TRUE))
+if (!require(&quot;mirbase.db&quot;, quietly = TRUE))
   BiocManager::install(&quot;mirbase.db&quot;)
+
+if (!require(&quot;miRBaseConverter&quot;, quietly = TRUE))
+  BiocManager::install(&quot;miRBaseConverter&quot;)
 
 
 library(GEOmetadb)
 library(biomaRt)
 library(mirbase.db)
+library(miRBaseConverter)
 
 
 if( !file.exists(&quot;GEOmetadb.sqlite&quot;) ) {
@@ -1843,8 +1847,8 @@ current_gpl_info &lt;- GEOquery::Meta(GEOquery::getGEO(current_gpl))</code></pre
 sapiens)<br /> <strong>Submission data:</strong>Mar 14 2013 <br />
 <strong>Last Update data:</strong> Mar 27 2019 <br />
 <strong>Organism:</strong> Homo sapiens <br /> <strong>Number of GEO
-datasets using this technology:</strong> 10524 <br /> <strong>Number of
-GEO samples that use this technology:</strong>300754<br /></p>
+datasets using this technology:</strong> 10529 <br /> <strong>Number of
+GEO samples that use this technology:</strong>300790<br /></p>
 <p>Getting the expression data</p>
 <pre class="r"><code>sfiles = GEOquery::getGEOSuppFiles(&#39;GSE117452&#39;)
 
@@ -2260,7 +2264,8 @@ miRNA.</p>
 <p><a href="https://www.genenames.org/about/guidelines/" class="uri">https://www.genenames.org/about/guidelines/</a></p>
 <p><a href="https://www.mirbase.org/" class="uri">https://www.mirbase.org/</a> <br /></p>
 <p><strong>Question4: Were there expression values that could not be
-mapped to current HUGO symbols?</strong></p>
+mapped to current HUGO symbols?</strong> Using the mirbase.db, the HUGO
+symbols can easily be mapped to the genes identified in this study.</p>
 <pre class="r"><code>library(biomaRt)
 listMarts()</code></pre>
 <div data-pagedtable="false">
