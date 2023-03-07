@@ -1663,6 +1663,7 @@ Data</a>
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
+<p>KO: DDX knockout WT: wild type</p>
 <p>Women of African American (AA) ancestry are know to have more risk of
 being diagnosed with ER-/TN(triple negative) breast cancer, as compared
 to women in European American (EA) ancestry. This study looks at a
@@ -1718,30 +1719,32 @@ if( !file.exists(&quot;GEOmetadb.sqlite&quot;) ) {
 } else {
     demo_sqlfile &lt;- &quot;GEOmetadb.sqlite&quot;
     
-}
-file.info(demo_sqlfile)
-con &lt;- dbConnect(SQLite(), demo_sqlfile)</code></pre>
+}</code></pre>
 <p>Query of the database:</p>
 <pre><code>
 
 
-Open the data:
+Download the data:
 
 ```r
-sfiles = GEOquery::getGEOSuppFiles(&#39;GSE156543&#39;)
-
 #if the file exists, open it
-fnames &lt;- &quot;GSE156543/GSE117452_expn_matrix_mimat.txt.gz&quot;
+fnames &lt;- &quot;GSE156543/GSE156543_Raw_gene_counts_matrix.txt.gz&quot;
+
 if (! file.exists(fnames)){
   gse &lt;- GEOquery::getGEO(&quot;GSE117452&quot;, GSEMatrix=FALSE)
-  sfiles = GEOquery::getGEOSuppFiles(&quot;GSE117452&quot;)
+  sfiles = GEOquery::getGEOSuppFiles(&quot;GSE156543&quot;)
   fnames = rownames(sfiles)
 }</code></pre>
 <div id="geo-description-of-dataset" class="section level2">
 <h2>Geo Description of dataset:</h2>
 <pre class="r"><code>gse &lt;- GEOquery::getGEO(&quot;GSE156543&quot;,GSEMatrix=FALSE)
-
-knitr::kable(data.frame(head(GEOquery::Meta(gse))), format = &quot;html&quot;)</code></pre>
+data.frame(head(GEOquery::Meta(gse)))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["contact_address"],"name":[1],"type":["chr"],"align":["left"]},{"label":["contact_city"],"name":[2],"type":["chr"],"align":["left"]},{"label":["contact_country"],"name":[3],"type":["chr"],"align":["left"]},{"label":["contact_email"],"name":[4],"type":["chr"],"align":["left"]},{"label":["contact_institute"],"name":[5],"type":["chr"],"align":["left"]},{"label":["contact_name"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"38 Xueyuan Road","2":"Beijing","3":"China","4":"zlliu@bjmu.edu.cn","5":"Peking University Health Science Center","6":"Zelin,,Liu"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>knitr::kable(data.frame(head(GEOquery::Meta(gse))), format = &quot;html&quot;)</code></pre>
 <table>
 <thead>
 <tr>
@@ -1795,23 +1798,12 @@ current_gpl_info &lt;- GEOquery::Meta(GEOquery::getGEO(current_gpl))</code></pre
 <strong>Submission data:</strong>Aug 11 2015 <br /> <strong>Last Update
 data:</strong> Mar 20 2019 <br /> <strong>Organism:</strong> Homo sapiens
 <br /> <strong>Number of GEO datasets using this technology:</strong>
-1539 <br /> <strong>Number of GEO samples that use this
-technology:</strong>26760<br /></p>
+1551 <br /> <strong>Number of GEO samples that use this
+technology:</strong>26884<br /></p>
 <p>Getting the expression data IMP</p>
-<pre class="r"><code>sfiles = GEOquery::getGEOSuppFiles(&#39;GSE156543&#39;)
+<pre class="r"><code>DDX39B_exp = read.delim(fnames[1],header=TRUE, check.names = FALSE) 
 
-fnames = rownames(sfiles)
-
-#69 columns, there are 68 samples (58 breast cancer patients 
-#(29 AA and 29 EA women) and 10 (5 AA and 5 EA) healthy women.)
-
-#589 rows (Genes) differentially expressed microRNA
-
-
-er_exp = read.delim(fnames[1],header=TRUE, check.names = FALSE) #not correct col names
-
-
-knitr::kable(er_exp[1:5,], format = &quot;html&quot;)</code></pre>
+knitr::kable(DDX39B_exp[1:5,], format = &quot;html&quot;)</code></pre>
 <table>
 <thead>
 <tr>
@@ -1955,12 +1947,212 @@ ENSG00000284332.1
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>er_exp[1:5,]</code></pre>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["S-39BKO1_FRAS202372747-1r"],"name":[1],"type":["int"],"align":["right"]},{"label":["S-39BKO2_FRAS202372748-1r"],"name":[2],"type":["int"],"align":["right"]},{"label":["S-39BKO3_FRAS202372749-1r"],"name":[3],"type":["int"],"align":["right"]},{"label":["WT1_FRAS202372744-1r"],"name":[4],"type":["int"],"align":["right"]},{"label":["WT2_FRAS202372745-1r"],"name":[5],"type":["int"],"align":["right"]},{"label":["WT3_FRAS202372746-1r"],"name":[6],"type":["int"],"align":["right"]}],"data":[{"1":"0","2":"0","3":"0","4":"0","5":"0","6":"0","_rn_":"ENSG00000223972.5"},{"1":"77","2":"91","3":"60","4":"58","5":"90","6":"106","_rn_":"ENSG00000227232.5"},{"1":"0","2":"0","3":"0","4":"0","5":"0","6":"0","_rn_":"ENSG00000278267.1"},{"1":"0","2":"0","3":"0","4":"0","5":"0","6":"0","_rn_":"ENSG00000243485.5"},{"1":"0","2":"0","3":"0","4":"0","5":"0","6":"0","_rn_":"ENSG00000284332.1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<p>cleaning the data:</p>
+<pre class="r"><code>dim(DDX39B_exp) </code></pre>
+<pre><code>## [1] 58381     6</code></pre>
+<pre class="r"><code>#58381 rows, 6 col
+colnames(DDX39B_exp) </code></pre>
+<pre><code>## [1] &quot;S-39BKO1_FRAS202372747-1r&quot; &quot;S-39BKO2_FRAS202372748-1r&quot;
+## [3] &quot;S-39BKO3_FRAS202372749-1r&quot; &quot;WT1_FRAS202372744-1r&quot;     
+## [5] &quot;WT2_FRAS202372745-1r&quot;      &quot;WT3_FRAS202372746-1r&quot;</code></pre>
+<pre class="r"><code>#(3 KO and 3 WT)
+
+summarized_gene_counts &lt;- sort(table(DDX39B_exp[, 1]), decreasing = TRUE)
+knitr::kable(table(DDX39B_exp[, 1])[1:3], format=&quot;html&quot;)</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Var1
+</th>
+<th style="text-align:right;">
+Freq
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:right;">
+37649
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+2465
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:right;">
+1503
+</td>
+</tr>
+</tbody>
+</table>
+<p>Class example</p>
+<pre class="r"><code>sfiles = GEOquery::getGEOSuppFiles(&quot;GSE70072&quot;)
+fnames = rownames(sfiles)
+
+
+ca125_exp = read.delim(fnames[1],header=TRUE, check.names = FALSE) 
+
+knitr::kable(ca125_exp[1:5,1:5], format = &quot;html&quot;)</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+ensembl75_id
+</th>
+<th style="text-align:left;">
+gname
+</th>
+<th style="text-align:right;">
+Pt.A.CA125-
+</th>
+<th style="text-align:right;">
+Pt.A.CA125+
+</th>
+<th style="text-align:right;">
+pt.B.CA125-
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+ENSG00000000003
+</td>
+<td style="text-align:left;">
+TSPAN6
+</td>
+<td style="text-align:right;">
+1858
+</td>
+<td style="text-align:right;">
+1626
+</td>
+<td style="text-align:right;">
+2711
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ENSG00000000005
+</td>
+<td style="text-align:left;">
+TNMD
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ENSG00000000419
+</td>
+<td style="text-align:left;">
+DPM1
+</td>
+<td style="text-align:right;">
+900
+</td>
+<td style="text-align:right;">
+1090
+</td>
+<td style="text-align:right;">
+746
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ENSG00000000457
+</td>
+<td style="text-align:left;">
+SCYL3
+</td>
+<td style="text-align:right;">
+236
+</td>
+<td style="text-align:right;">
+138
+</td>
+<td style="text-align:right;">
+343
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ENSG00000000460
+</td>
+<td style="text-align:left;">
+C1orf112
+</td>
+<td style="text-align:right;">
+216
+</td>
+<td style="text-align:right;">
+184
+</td>
+<td style="text-align:right;">
+326
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>summarized_gene_counts &lt;- sort(table(ca125_exp[, 1]), decreasing = TRUE)
+knitr::kable(table(ca125_exp[, 1])[1:3], format=&quot;html&quot;)</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Var1
+</th>
+<th style="text-align:right;">
+Freq
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+ENSG00000000003
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ENSG00000000005
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ENSG00000000419
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="references" class="section level1 unnumbered">

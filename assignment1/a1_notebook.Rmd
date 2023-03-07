@@ -3,15 +3,22 @@ title: "Assignment 1"
 author: "Yasamin Nouri Jelyani"
 output:
   html_document:
-    toc: true
+    toc: yes
     toc_depth: 2
     df_print: paged
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
 bibliography: a2.bib
-csl: biomed-central.csl
+csl: "biomed-central.csl"
 nocite: '@*'
 ---
 
 # Introduction
+
+
+KO: DDX knockout
+WT: wild type
 
 Women of African American (AA) ancestry are know to have more risk of being 
 diagnosed
@@ -62,6 +69,10 @@ if (!requireNamespace("biomaRt", quietly = TRUE)){
   install.packages("biomaRt")}
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
+if (!require("stringr", quietly = TRUE))
+    install.packages("stringr")
+if (!require("dplyr", quietly = TRUE))
+    install.packages("dplyr")
 
 library(GEOmetadb)
 library(biomaRt)
@@ -71,25 +82,20 @@ if( !file.exists("GEOmetadb.sqlite") ) {
     demo_sqlfile <- "GEOmetadb.sqlite"
     
 }
-file.info(demo_sqlfile)
-con <- dbConnect(SQLite(), demo_sqlfile)
-```
 
-Query of the database:
 
 ```
 
 
+Download the data:
 
-Open the data:
 ```{r message=FALSE}
-sfiles = GEOquery::getGEOSuppFiles('GSE156543')
-
 #if the file exists, open it
-fnames <- "GSE156543/GSE117452_expn_matrix_mimat.txt.gz"
+fnames <- "GSE156543/GSE156543_Raw_gene_counts_matrix.txt.gz"
+
 if (! file.exists(fnames)){
   gse <- GEOquery::getGEO("GSE117452", GSEMatrix=FALSE)
-  sfiles = GEOquery::getGEOSuppFiles("GSE117452")
+  sfiles = GEOquery::getGEOSuppFiles("GSE156543")
   fnames = rownames(sfiles)
 }
 ```
@@ -97,11 +103,10 @@ if (! file.exists(fnames)){
 
 
 
-
 ## Geo Description of dataset:
 ```{r message=FALSE}
 gse <- GEOquery::getGEO("GSE156543",GSEMatrix=FALSE)
-
+data.frame(head(GEOquery::Meta(gse)))
 knitr::kable(data.frame(head(GEOquery::Meta(gse))), format = "html")
 ```
 
@@ -115,25 +120,210 @@ current_gpl_info <- GEOquery::Meta(GEOquery::getGEO(current_gpl))
 **Platform title:** `r current_gpl_info$title`<br /> **Submission data:**`r current_gpl_info$submission_date` <br/> **Last Update data:** `r current_gpl_info$last_update_date` <br/> **Organism:** `r current_gpl_info$organism` <br/> **Number of GEO datasets using this technology:** `r length(current_gpl_info$series_id)` <br/> **Number of GEO samples that use this technology:**`r length(current_gpl_info$sample_id)`<br/>
 
 
-Getting the expression data IMP
+Getting the expression data 
 ```{r message=FALSE}
-sfiles = GEOquery::getGEOSuppFiles('GSE156543')
+DDX39B_exp = read.delim(fnames[1],header=TRUE, check.names = FALSE) 
 
-fnames = rownames(sfiles)
-
-#69 columns, there are 68 samples (58 breast cancer patients 
-#(29 AA and 29 EA women) and 10 (5 AA and 5 EA) healthy women.)
-
-#589 rows (Genes) differentially expressed microRNA
-
-
-er_exp = read.delim(fnames[1],header=TRUE, check.names = FALSE) #not correct col names
-
-
-knitr::kable(er_exp[1:5,], format = "html")
-er_exp[1:5,]
+knitr::kable(DDX39B_exp[1:5,], format = "html")
 
 ```
+
+cleaning the data:
+I have unique ENSG IDs, so I will not filter
+```{r}
+dim(DDX39B_exp) 
+#58381 rows, 6 col
+colnames(DDX39B_exp) 
+#(3 KO and 3 WT)
+rownames(DDX39B_exp) 
+if("ensemble_ID" %in% colnames(DDX39B_exp))
+{
+  ;
+}else{
+  DDX39B_exp <- tibble::rownames_to_column(DDX39B_exp, "VALUE")
+  colnames(DDX39B_exp)[1]  <- "ensemble_ID"
+}
+
+summarized_gene_counts <- sort(table(DDX39B_exp$ensemble_ID), decreasing = TRUE)
+knitr::kable(table(DDX39B_exp[, 1])[1:3], format="html")
+
+```
+
+
+## Gene name structure
+Removing genes that do not follow ensembl nomenclature
+
+```{r}
+#check that all ensg are unique and all start with ENSG pattern 
+areUniquegenes <- length(DDX39B_exp$ensemble_ID) == length(unique(DDX39B_exp$ensemble_ID))
+allValidGenes <- length(grep("ENSG.*", DDX39B_exp$ensemble_ID)) == length(DDX39B_exp$ensemble_ID)
+
+
+```
+
+
+In edgeR, it is recommended to remove features without at least 1 read per million
+in n of the samples, where n is the size of the smallest group of replicates.
+
+```{r}
+#removing the versions  
+DDX39B_exp <- tidyr::separate(DDX39B_exp, ensemble_ID, into = c("ensemble_ID", "Second"), "[.]")
+DDX39B_exp <- DDX39B_exp[, -2]  
+  
+cpms = edgeR::cpm(DDX39B_exp[,2:7])
+rownames(cpms) <- DDX39B_exp$ensembl_id
+keep = rowSums(cpms > 1) >= 3 # I have 6 groups, 3 sample replicates and 3 WT replicates
+genes_filtered <- DDX39B_exp[keep,]
+
+
+dim(genes_filtered)
+filtered_results <- data.frame(genes_expression = nrow(DDX39B_exp), validGenes = nrow(DDX39B_exp), genes_filtered = nrow(genes_filtered))
+rownames(filtered_results)[1] <- "Number of Genes"
+filtered_results %>%
+  kableExtra::kbl(caption = "Genes count") %>%
+  kableExtra::kable_classic(full_width = F, html_font = "Cambria")
+```
+
+Data distribution density plot: 
+
+```{r}
+data2plot <- log2(edgeR::cpm(genes_filtered[,2:7]))
+counts_density <- apply(log2(edgeR::cpm(genes_filtered[,2:7])), 
+ 2, density)
+ #calculate the limits across all the samples
+ xlim <- 0; ylim <- 0
+ for (i in 1:length(counts_density)) {
+ xlim <- range(c(xlim, counts_density[[i]]$x)); 
+ ylim <- range(c(ylim, counts_density[[i]]$y))
+ }
+ cols <- rainbow(length(counts_density))
+ ltys <- rep(1, length(counts_density))
+ #plot the first density plot to initialize the plot
+ plot(counts_density[[1]], xlim=xlim, ylim=ylim, type="n", 
+ ylab="Smoothing density of log2-CPM", 
+ main="", cex.lab = 0.85)
+ #plot each line
+ for (i in 1:length(counts_density)) 
+ lines(counts_density[[i]], col=cols[i], lty=ltys[i])
+ #create legend
+ legend("topright", colnames(data2plot), 
+ col=cols, lty=ltys, cex=0.75, 
+ border ="blue", text.col = "green4", 
+ merge = TRUE, bg = "gray90")
+```
+
+Data distribution boxplot: 
+```{r}
+
+data2plot <- log2(edgeR::cpm(genes_filtered[,2:7]))
+boxplot(data2plot, xlab = "Samples", ylab = "log2 CPM", 
+ las = 2, cex = 0.5, cex.lab = 0.5,
+ cex.axis = 0.5, main = "CA125 RNASeq Samples")
+#draw the median on each box plot
+abline(h = median(apply(data2plot, 2, median)), 
+ col = "green", lwd = 0.6, lty = "dashed")
+```
+
+after removing outliers
+
+How to remove outliers?
+```{r}
+
+```
+
+
+Normalization by
+distribution method
+
+```{r}
+limma::plotMA(log2(DDX39B_exp[,c(4,5)]), ylab="M - ratio log expression", 
+ main="DDX39B KO + vs WT sample")
+```
+
+#NOT WORKING!! 
+
+```{r}
+filtered_data_matrix <- as.matrix(genes_filtered[,2:7])
+rownames(filtered_data_matrix) <- genes_filtered$ensemble_ID
+d <- edgeR::DGEList(counts=filtered_data_matrix)
+d <- edgeR::calcNormFactors(d) 
+normalized_counts <- edgeR::cpm(d)
+limma::plotMDS(normalized_counts, label=c("test1", "test2", "test3", "test4", "test1", "test1"),
+ col = c("darkgreen","blue"))
+```
+
+
+```{r}
+colnames(normalized_counts)
+```
+
+
+```{r}
+library(biomaRt)
+```
+
+
+```{r}
+
+```
+
+
+To perform mapping, ensembl_gene_id is selected
+#DID NOT WORK!!
+```{r}
+ensembl <- useMart("ensembl")
+ensembl <- useDataset("hsapiens_gene_ensembl",mart=ensembl)
+conversion_stash <- "DDX3_id_conversion.rds"
+if(file.exists(conversion_stash)){
+  my_id_conversion <- readRDS(conversion_stash)
+} else {
+  gene_mapped <- getBM(attributes = c("ensembl_gene_id","hgnc_symbol"), filters = c("ensembl_gene_id"), values=genes_filtered$ensemble_ID, mart = ensembl)
+  saveRDS(gene_mapped, conversion_stash)
+}
+```
+
+
+```{r}
+genes_filtered$ensemble_ID[1:10]
+```
+
+
+```{r}
+length(which(rownames(cpms) %in%
+gene_mapped$ensembl_gene_id))
+```
+Total number of genes with measurements
+```{r}
+nrow(cpms)
+```
+Number of genes that could not be mapped
+```{r}
+nrow(cpms) - length(which(rownames(cpms) %in%
+gene_mapped$ensembl_gene_id)) 
+```
+Merging raw data and mapped genes; presenting data in one metobolic syndrome patient and one healthy person
+```{r}
+cpms_annot <- merge(gene_mapped,cpms,
+by.x = 1, by.y = 0, all.y=TRUE)
+knitr::kable(cpms_annot[1:6,c(1,2,3,8)],format = "html")
+```
+* Another method to check ensembl ID missing genes.
+```{r}
+length(ensembl_id_missing_gene <- cpms_annot$ensembl_gene_id[
+which(is.na(cpms_annot$hgnc_symbol))])
+```
+Presenting the first 10 ensembl IDs that do not match with HUGO
+```{r}
+knitr::kable(cpms_annot[which(is.na(cpms_annot$hgnc_symbol)),1:3], format = "pipe")[3:12]
+```
+
+Old mapping
+
+```{r}
+old_mapping <- merge(genes_filtered,data.frame(ensembl_id_missing_gene), by.x = 1, by.y = 1)
+knitr::kable(old_mapping[1:10,], type="pipe")
+```
+
 
 
 
