@@ -16,24 +16,24 @@ nocite: '@*'
 
 # Introduction
 
+RNA processing events include transcription, mRNA splicing, and Export.
+These RNA processing events are coordinated by the TREX complex.
+The essential subunit of the TREX complex is: DDX39B. This paper explores function of the DDX39B complex in handling damaged DNA.
+The DDX39B complex couples the splicing and export events by recruiting ALYREF. The DDX39B complex also facilitates DNA repair.
+It facilitated DNA repair by upregulating BRCA1 by binding to it, and stabalizing it.This	ensures ssDNA formation and RAD51 accumulation at double stranded break sites.
+Hence, the DDX39B complex handles damaged DNA by maintaining BRCA1 levels. <\br>
+Without DDX39B ovarian cancer cells have hypersensitivity to DNA-damaging chemotherapeutic and are more likely to have damaged DNA.
+High DDX39B expression is correlated with worse survival in ovarian cancer patients since it protects the cells from DNA damage. 
+DDX39B suppression represents a target for enhancing the efficacy of chemotherapy in BRCA1-proficient ovarian cancers. The paper has found that lacking DDX is like lacking BRCA1 which prevents the cells from repairing their broken DNA. <\br>
+DDX39B depletion sensitizes cancer cells to DNA damaging agent including chemotherapy. The experiment in this paper used HeLA cells and performed Knockout of DDX39B complex genes on 3 knockout samples. The researchers then checked response to chemo agents. They discovered less survival as compared to wild type cells. <\b>
+Following the loss of DDX39B, the researchers persormed transcriptome profiles. They preformed mRNA sequencing in both wild-type and DDX39B knockout HeLa cells. <\br>
+Among the genes that are regulated by DDX39B deficiency, 1483 genes were found to be upregulated and 1272 genes were down-regulated. Importantly, BRCA1, which is a key player in DNA damage repair, was significantly downregulated in DDX39B-depleted cells. 
 
-KO: DDX knockout
-WT: wild type
+The researchers also performed qPCR and western blot to confirm that BRCA1 both the mRNA and protein levels were decreased in DDX39B knock out HeLa cells. Researchers also found that the regulation on BRCA1 is specific to DDX39B and no other DDX homologues.
+All in all, these data suggest that DDX39B participates in DNA repair pathway via upregulating BRCA1 at the mRNA level. <\br>
+KO: DDX knockout genes <\br>
+WT: wild type <\br>
 
-Women of African American (AA) ancestry are know to have more risk of being 
-diagnosed
-with ER-/TN(triple negative) breast cancer, as compared to women in European 
-American (EA) ancestry. This study looks at a number of differentially expressed 
-microRNA (DEmiRs) to identify miRNA patterns that are potential biomarkers 
-of this disease. This study found that out of the 102 ER-subtype related DemiRs, majority 
-of them were specific to the race, and only 23 were common between the races (1).
-Hence, there are subsets of microRNA that are differentially expressed between EA and
-AA women. This information help with better targetted treatment of this type of cancer.
-
-Tissue samples:
-58 Breast cancer patient (29 AA, 29 EA)
-10 healthy women (5 AA, 5 EA)
-<br/>
 **Question1: What are the control and test conditions of the dataset?** <br/> 
 Control condition: Healthy female breast tissue, for both AA and EA decent individuals <br/> 
 
@@ -248,7 +248,7 @@ distribution method
 limma::plotMA(log2(DDX39B_exp[,c(4,5)]), ylab="M - ratio log expression", 
  main="DDX39B KO + vs WT sample")
 ```
-
+MDS plot of normalised data
 ```{r}
 filtered_data_matrix <- as.matrix(genes_filtered[,2:7])
 rownames(filtered_data_matrix) <- genes_filtered$ensemble_ID
@@ -276,6 +276,8 @@ library(biomaRt)
 
 
 To perform mapping, ensembl_gene_id is selected
+
+# ISSUE: when DDX4 file  exists, I don't get conversion stash
 ```{r}
 ensembl <- useMart("ensembl")
 ensembl <- useMart(biomart="ensembl", dataset="hsapiens_gene_ensembl")
@@ -299,10 +301,14 @@ Total number of genes with measurements
 nrow(cpms)
 ```
 Number of genes that could not be mapped
+
+
 ```{r}
 nrow(cpms) - length(which(rownames(cpms) %in%
 gene_mapped$ensembl_gene_id)) 
 ```
+
+
 Merging raw data and mapped genes
 ```{r}
 cpms_annot <- merge(gene_mapped, normalized_counts,
@@ -395,6 +401,7 @@ limma::plotMDS(normalized_counts,
 
 
 ```{r}
+
 samples <- data.frame(
         lapply(colnames(normalized_count_data)[3:8], 
         FUN=function(x){
@@ -407,6 +414,7 @@ samples <- tibble::rownames_to_column(samples, "cell_type")
 
 ```
 
+Expression is only controlled by WT or KO the origin of the cell does not effect my data as seen in limma graph
 ```{r}
 model_design <- model.matrix(~ samples$cell_type )
 kable(model_design[1:5,], type="html")
@@ -423,19 +431,23 @@ minimalSet <- Biobase::ExpressionSet(assayData=expressionMatrix)
 ```
 
 # How to do model design??
-
+Fit data to the model
 ```{r}
 fit <- limma::lmFit(minimalSet, model_design)
 
 ```
 Top hits for this expression, order according to p value
+Perform differntial expression and associate with p-values.
+Get all of the top hists associated with expression
+Use Benjamin Hoffberger method for adjustment. 
 ```{r}
 fit2 <- limma::eBayes(fit,trend=TRUE)
+# adjust model for multiple hypothesis testing
 topfit <- topTable(fit2, 
                    coef=ncol(model_design),
                    adjust.method = "BH",
                    number = nrow(expressionMatrix))
-#merge hgnc names to topfit table
+#merge hgnc names to topfit table add ENSG and gen ID to output
 output_hits <- merge(normalized_count_data[,1:2],
                      topfit,
                      by.y=0,by.x=1,
@@ -443,6 +455,186 @@ output_hits <- merge(normalized_count_data[,1:2],
 #sort by pvalue
 output_hits <- output_hits[order(output_hits$P.Value),]
 ```
+
+Get our top 10 hits, including the p-values, hgnc symbol names, logFC between WT and KO states
+Avg expression, t-value for t-test, p-value, and adjusted p-value
+```{r}
+kable(output_hits[1:10,2:8],type="html",row.names = FALSE)
+
+```
+
+
+The number of genes that pass the threshold of 0.5 p-value, the more the better
+Need to account for biological model if there is only a few of these significant genes. 
+```{r}
+length(which(output_hits$P.Value < 0.05))
+
+```
+
+Number of genes that pass the correction
+correct for randomness
+```{r}
+length(which(output_hits$adj.P.Val < 0.05))
+
+```
+
+heatmap for just significant differentially expressed genes
+# Do I need to serach for only 1 gene like MUC16? Yes, I will do BRCA2
+```{r}
+#p-value less than 0.05
+top_hits <- output_hits$ensembl_gene_id[
+  output_hits$P.Value<0.05]
+heatmap_matrix_tophits <- t(
+  scale(t(heatmap_matrix[
+    which(rownames(heatmap_matrix) %in% top_hits),])))
+if(min(heatmap_matrix_tophits) == 0){
+    heatmap_col = colorRamp2(c( 0, max(heatmap_matrix_tophits)), 
+                             c( "white", "red"))
+  } else {
+    heatmap_col = colorRamp2(c(min(heatmap_matrix_tophits), 0,
+      max(heatmap_matrix_tophits)), c("blue", "white", "red"))
+  }
+current_heatmap <- Heatmap(as.matrix(heatmap_matrix_tophits),
+                           cluster_rows = TRUE,
+                           cluster_columns = TRUE,
+                               show_row_dend = TRUE,
+                               show_column_dend = TRUE, 
+                               col=heatmap_col,
+                               show_column_names = TRUE, 
+                               show_row_names = FALSE,
+                               show_heatmap_legend = TRUE,
+                               )
+```
+
+
+Keep the WT and KO together
+Are there blocks of genes present in WT vs KO? 
+Are there similar expression with respect to the genes? 
+```{r}
+heatmap_matrix_tophits<- heatmap_matrix_tophits[, 
+    c(grep(colnames(heatmap_matrix_tophits),
+                          pattern = "WT"),
+      grep(colnames(heatmap_matrix_tophits),
+                          pattern = "KO"))]
+if(min(heatmap_matrix_tophits) == 0){
+    heatmap_col = colorRamp2(c( 0, max(heatmap_matrix_tophits)), 
+                             c( "white", "red"))
+  } else {
+    heatmap_col = colorRamp2(c(min(heatmap_matrix_tophits), 0,
+                    max(heatmap_matrix_tophits)), 
+                    c("blue", "white", "red"))
+  }
+current_heatmap <- Heatmap(as.matrix(heatmap_matrix_tophits),
+                           cluster_rows = TRUE,
+                           cluster_columns = FALSE,
+                               show_row_dend = TRUE,
+                               show_column_dend = TRUE, 
+                               col=heatmap_col,
+                               show_column_names = TRUE, 
+                               show_row_names = FALSE,
+                               show_heatmap_legend = TRUE,
+                               )
+```
+
+
+Using edgeR for calculating differential Expression for RNAseq
+
+can use models to score for diff exp
+Recommended to use Quasi for bulk RNA seq, 
+```{r}
+#setup edgeR object
+d = DGEList(counts=filtered_data_matrix, group=samples$cell_type)
+#estimate dispersion
+d <- estimateDisp(d, model_design)
+
+#fit model
+fit <- glmQLFit(d, model_design)
+
+kable(model_design, type="html") %>%
+  row_spec(0, angle = -45)
+
+```
+
+Do differential expression grab the top hists
+logCPM 
+p-value
+logFC of WT and KO cells
+```{r}
+#Choose sample KO
+qlf.pos_vs_neg <- glmQLFTest(fit, coef='samples$cell_typeKO')
+kable(topTags(qlf.pos_vs_neg), type="html",row.names = FALSE)
+```
+
+Number of genes that pass 0.05 threshold
+```{r}
+qlf_output_hits <- topTags(qlf.pos_vs_neg,sort.by = "PValue",
+                           n = nrow(normalized_count_data))
+
+length(which(qlf_output_hits$table$PValue < 0.05))
+
+length(which(qlf_output_hits$table$FDR < 0.05))
+
+```
+
+
+edgeR (better since for RNAseq data) vs limma
+```{r}
+qlf_model_pvalues <- data.frame(
+          ensembl_id = rownames(qlf_output_hits$table),
+          qlf_pvalue=qlf_output_hits$table$PValue)
+limma_model_pvalues <-  data.frame(
+          ensembl_id = output_hits_pat$ensembl_gene_id,
+          limma_pvalue = output_hits_pat$P.Value)
+two_models_pvalues <- merge(qlf_model_pvalues,
+                            limma_model_pvalues,
+                            by.x=1,by.y=1)
+two_models_pvalues$colour <- "black"
+two_models_pvalues$colour[two_models_pvalues$qlf_pvalue
+                          <0.05] <- "orange"
+two_models_pvalues$colour[two_models_pvalues$limma_pvalue
+                          <0.05] <- "blue"
+two_models_pvalues$colour[two_models_pvalues$qlf_pvalue
+                          <0.05 &                            
+two_models_pvalues$limma_pvalue<0.05] <- "red"
+plot(two_models_pvalues$qlf_pvalue,
+     two_models_pvalues$limma_pvalue,
+     col = two_models_pvalues$colour,
+     xlab = "QLF model p-values",
+     ylab ="Limma model p-values",
+     main="QLF vs limma")
+```
+
+heatmap using QLF data 
+# I am looking for the WT and KO top hits
+```{r}
+top_hits <- rownames(qlf_output_hits$table)[output_hits$P.Value
+                                            <0.05] 
+heatmap_matrix_tophits <- t(
+  scale(t(heatmap_matrix[which(rownames(heatmap_matrix) 
+                               %in% top_hits),]))) 
+heatmap_matrix_tophits<- heatmap_matrix_tophits[,
+  c(grep(colnames(heatmap_matrix_tophits),pattern = "WT"),
+    grep(colnames(heatmap_matrix_tophits),pattern = "KO"))]
+if(min(heatmap_matrix_tophits) == 0){
+    heatmap_col = colorRamp2(c( 0, max(heatmap_matrix_tophits)), 
+                             c( "white", "red"))
+  } else {
+    heatmap_col = colorRamp2(c(min(heatmap_matrix_tophits), 0, 
+                               max(heatmap_matrix_tophits)), 
+                             c("blue", "white", "red"))
+  }
+current_heatmap <- Heatmap(as.matrix(heatmap_matrix_tophits),
+                           cluster_rows = TRUE,
+                           cluster_columns = FALSE,
+                               show_row_dend = TRUE,
+                               show_column_dend = FALSE,
+                               col=heatmap_col,
+                               show_column_names = TRUE, 
+                               show_row_names = FALSE,
+                               show_heatmap_legend = TRUE)
+```
+
+
 
 
 # References
