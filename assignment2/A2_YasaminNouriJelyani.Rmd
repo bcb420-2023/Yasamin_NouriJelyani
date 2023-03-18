@@ -34,6 +34,7 @@ KO: DDX knockout genes <\br>
 WT: wild type <\br>
 
  
+ 
 ```{r eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
@@ -666,12 +667,16 @@ write.table(x=both_d_u_genes,
 
 **Question: Which method did you choose and why?** <br/> 
 I will perform Thresholded  ORA analysis on my significantly up-regulated and down-regulated set of genes.
-There are multiple methods to perfom this task. I chose G:profiler because it is updated,
-has a webserver as well as an R package, and it is used to perform ORA analysis. 
+There are multiple methods to perfom this task. I chose G:profiler because it is updated,has many annotations from ensembl (since my data is Ensembl, this method is useful), has a webserver as well as an R package, is 
+for human data, uses Fischer exact test, and it is used to perform ORA analysis. Many methofds are very similar to the G:profler method. 
 <br/>
 
-**Question: What annotation data did you use and why? What version of the annotation are you using?** <br/> 
+#TODO: What is this question asking? 
+#How to do this part of the analysis? 
 
+**Question: What annotation data did you use and why? What version of the annotation are you using?** <br/> 
+I will use the down-regulated set of annotated data to perform pathway analysis since
+in the paper, the authors discuss that BRCA2 which is their gene of interest is down-regulated. 
 <br/>
 
 **Question: How many genesets were returned with what thresholds?** <br/> 
@@ -684,14 +689,35 @@ has a webserver as well as an R package, and it is used to perform ORA analysis.
 
 
 **Question: Do the over-representation results support conclusions or mechanism discussed in the original paper?** <br/> 
+Over-representation results refer to the identification of biological pathways 
+or functional categories that are significantly overrepresented in a set of 
+differentially expressed genes as compared to what would be expected by chance.
 
-<br/>
+
 
 **Question: Can you find evidence, i.e. publications, to support some of the results that you see. How does this evidence support your results?** <br/> 
 
+
+
 ## ORA with upregulated genes
 
+1. Pasted content from upregulated_genes.txt to the G:profiler list of genes box. 
+2. Under advanced options, I ensured to set the sigificance threshold to BH which is
+what I used for correcting for multiple hypothesis testing. 
+3. I chose all my results and not only the significant results
+4. Under data sources for my initial pathway analysis, I chose pathways associated with GO by choosing the GO biological process, and No electronic GO annotations (to ensure get the best annotation results). I also chose Reactome and WikiPathways for my pathway database. 
+5. Then, I run query to run enrichment analysis.
+6. I then Select the Ensembl ID with the most GO annotations, and rerun the query
+7. Above the threshold line is considered very significant after collection and we can see the pathways. 
+8. Under detailed results tab, shorten the term size from 1 to 200
+9- Download GEM file
+
+For this dataset, I do not expect any important information since from the paper, I know that the downregulated data are most important.
+
 ## ORA with downregulated genes
+
+Many pathways are above the threshold in G:profiler as expected since in the paper
+the downregulation of genes are mostly analysed. 
 
 # References
 
