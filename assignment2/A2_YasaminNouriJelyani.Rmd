@@ -115,11 +115,10 @@ knitr::kable(data.frame(head(GEOquery::Meta(gse))), format = "html")
 ```
 
 Platform title:
-```{r warning=FALSE}
+```{r message=FALSE}
 current_gpl <- names(GEOquery::GPLList(gse))[1]
 current_gpl_info <- GEOquery::Meta(GEOquery::getGEO(current_gpl))
 ```
-
 
 **Platform title:** `r current_gpl_info$title`<br /> **Submission data:**`r current_gpl_info$submission_date` <br/> **Last Update data:** `r current_gpl_info$last_update_date` <br/> **Organism:** `r current_gpl_info$organism` <br/> **Number of GEO datasets using this technology:** `r length(current_gpl_info$series_id)` <br/> **Number of GEO samples that use this technology:**`r length(current_gpl_info$sample_id)`<br/>
 
@@ -130,17 +129,21 @@ DDX39B_exp = read.delim(fnames[1],header=TRUE, check.names = FALSE)
 
 knitr::kable(DDX39B_exp[1:5,], format = "html")
 
+
 ```
 
 ## cleaning the data:
 I have unique ENSG IDs, so I will not filter them
-```{r}
+```{r eval=FALSE}
 dim(DDX39B_exp) 
 #58381 rows, 6 col
 colnames(DDX39B_exp) 
 #(3 KO and 3 WT)
-
 rownames(DDX39B_exp) 
+
+```
+
+```{r warning=FALSE}
 if("ensemble_ID" %in% colnames(DDX39B_exp))
 {
   ;
@@ -159,7 +162,7 @@ knitr::kable(table(DDX39B_exp[, 1])[1:3], format="html")
 ## Gene name structure
 Removing genes that do not follow ensembl nomenclature
 
-```{r}
+```{r message=FALSE}
 #check that all ensg are unique and all start with ENSG pattern 
 areUniquegenes <- length(DDX39B_exp$ensemble_ID) == length(unique(DDX39B_exp$ensemble_ID))
 allValidGenes <- length(grep("ENSG.*", DDX39B_exp$ensemble_ID)) == length(DDX39B_exp$ensemble_ID)
@@ -171,7 +174,7 @@ allValidGenes <- length(grep("ENSG.*", DDX39B_exp$ensemble_ID)) == length(DDX39B
 In edgeR, it is recommended to remove features without at least 1 read per million
 in n of the samples, where n is the size of the smallest group of replicates.
 ## Normalisation
-```{r}
+```{r message=FALSE}
 #removing the versions  
 DDX39B_exp <- tidyr::separate(DDX39B_exp, ensemble_ID, into = c("ensemble_ID", "Second"), "[.]")
 DDX39B_exp <- DDX39B_exp[, -2]  
@@ -191,14 +194,14 @@ rownames(filtered_results)[1] <- "Number of Genes"
 Data dimension of data and filtered data.
 Lots of the data has been filtered in the normalisation process following the edgeR
 guidlines. 
-```{r}
+```{r message=FALSE}
 dim(cpms)
 length(which(keep))
 ```
 
 
 ## Data distribution density plot: 
-```{r}
+```{r message=FALSE}
 data2plot <- log2(edgeR::cpm(genes_filtered[,2:7]))
 counts_density <- apply(log2(edgeR::cpm(genes_filtered[,2:7])), 
  2, density)
@@ -225,7 +228,7 @@ counts_density <- apply(log2(edgeR::cpm(genes_filtered[,2:7])),
 ```
 
 Data distribution boxplot: 
-```{r}
+```{r warning=FALSE}
 
 data2plot <- log2(edgeR::cpm(genes_filtered[,2:7]))
 boxplot(data2plot, xlab = "Samples", ylab = "log2 CPM", 
@@ -237,12 +240,15 @@ abline(h = median(apply(data2plot, 2, median)),
 ```
 
 plotting normalization by distribution method
-```{r}
+```{r message=FALSE}
 limma::plotMA(log2(DDX39B_exp[,c(4,5)]), ylab="M - ratio log expression", 
  main="DDX39B KO + vs WT sample")
+
 ```
+
+
 # MDS plot of normalised data
-```{r}
+```{r message=FALSE}
 filtered_data_matrix <- as.matrix(genes_filtered[,2:7])
 rownames(filtered_data_matrix) <- genes_filtered$ensemble_ID
 d <- edgeR::DGEList(counts=filtered_data_matrix)
@@ -253,14 +259,13 @@ limma::plotMDS(normalized_counts, main="MDS plot of DDX39B KO and WT"
 ```
 
 
-```{r}
+```{r message=FALSE}
 colnames(normalized_counts)
 ```
 
 To perform mapping, ensembl_gene_id is selected
 
- ISSUE: when DDX4 file  exists, I don't get conversion stash
-```{r}
+```{r message=FALSE}
 ensembl <- biomaRt::useMart("ensembl")
 ensembl <- biomaRt::useMart(biomart="ensembl", dataset="hsapiens_gene_ensembl")
 conversion_stash <- "DDX4_id_conversion.rds"
@@ -272,36 +277,36 @@ saveRDS(gene_mapped, conversion_stash)
 
 ```
 
-```{r}
+```{r message=FALSE}
 genes_filtered$ensemble_ID[1:10]
 ```
 
 
 Total number of genes with measurements
-```{r}
+```{r message=FALSE}
 nrow(cpms)
 ```
 Number of genes that could be mapped
-```{r}
+```{r message=FALSE}
 nrow(cpms) - length(which(rownames(cpms) %in%
 gene_mapped$ensembl_gene_id)) 
 ```
 
 
 Merging raw data and mapped genes
-```{r}
+```{r message=FALSE}
 cpms_annot <- merge(gene_mapped, normalized_counts,
 by.x = 1, by.y = 0, all.y=TRUE)
 ```
 
 Check ensembl ID missing genes. 43 genes missing which
 is not too many (only 43) can still run differential analysis.
-```{r}
+```{r message=FALSE}
 length(ensembl_id_missing_gene <- cpms_annot$ensembl_gene_id[
 which(is.na(cpms_annot$hgnc_symbol))])
 ```
 
-```{r}
+```{r message=FALSE}
 write.table(cpms_annot,"./data/GSE156543_finalized_normalized_counts_2023.txt", sep = "\t", col.names = TRUE)
 
 
@@ -319,10 +324,12 @@ From the MDS plot, there is evidence of the cluster of KO and WT. WT vs KO clust
 
 <br/>
 
+
 ![MDS plot of normalised data from A1](images/mds_plot.png)
+<br/>
 
 Reading the normalized expression data from assignment 1
-```{r}
+```{r message=FALSE}
 normalized_count_data <- read.table(file=file.path(getwd(),"data", 
                 "GSE156543_finalized_normalized_counts_2023.txt"),
                                     header = TRUE,sep = "\t",
@@ -331,7 +338,7 @@ normalized_count_data <- read.table(file=file.path(getwd(),"data",
 ```
 
 Visualize expression values
-```{r}
+```{r message=FALSE}
 heatmap_matrix <- normalized_count_data[,
                         3:ncol(normalized_count_data)]
 #Row name is Ensemble gene IDs
@@ -342,7 +349,7 @@ colnames(heatmap_matrix) <- colnames(normalized_count_data[,
 
 
 Row normalize with scale function
-```{r}
+```{r message=FALSE}
 library(circlize)
 library(ComplexHeatmap)
 heatmap_matrix <- t(scale(t(heatmap_matrix)))
@@ -361,13 +368,13 @@ current_heatmap <- Heatmap(as.matrix(heatmap_matrix),
 
 ## Heat map for all genes in expression set
 Variability at the WT vs sample level. The WT and KO seem to have very different gene expression.
-```{r}
+```{r message=FALSE}
 current_heatmap
 ```
 
 
 Look at expression data and see difference of expression of the genes.
-```{r}
+```{r message=FALSE}
 knock_out <- normalized_count_data[3:5]
 Wild_type <- normalized_count_data[6:8]
 
@@ -376,20 +383,20 @@ Wild_type <- normalized_count_data[6:8]
 
 Due to the very large difference in expression of the WT and KO genes, I did used both limma and edgeR 
 packages to perform analysis, and received the same results for my model.
-```{r}
+```{r message=FALSE}
 samples <- c("KO", "KO", "KO", "control", "control", "control")
 ```
 
 Expression is only controlled by WT or KO the origin of the cell does not effect my data as seen in MDS plot.
 I will design my model matrix based on these two groups from my data.
-```{r}
+```{r message=FALSE}
 library(knitr)
 model_design <- model.matrix(~ samples)
 kable(model_design[1:5,], type="html")
 ```
 
 
-```{r}
+```{r message=FALSE}
 expressionMatrix <- as.matrix(normalized_count_data[,3:8])
 rownames(expressionMatrix) <- 
   normalized_count_data$ensembl_gene_id
@@ -399,7 +406,7 @@ minimalSet <- Biobase::ExpressionSet(assayData=expressionMatrix)
 ```
 
 Fit data to the model
-```{r}
+```{r message=FALSE}
 fit <- limma::lmFit(minimalSet, model_design)
 ```
 
@@ -408,7 +415,7 @@ Then I perform differential expression associated with the p-values.
 Finally, I will get all of the top hits associated with expression and 
 use Benjamin Hoffberger method for adjustment. 
 
-```{r}
+```{r message=FALSE}
 fit2 <- limma::eBayes(fit,trend=TRUE)
 # adjust model for multiple hypothesis testing
 topfit <- limma::topTable(fit2, 
@@ -428,11 +435,11 @@ output_hits <- output_hits[order(output_hits$P.Value),]
 The Benjamini-Hochberg method is a widely used method for multiple hypothesis correction. It is used to control the false discovery rate when testing multiple hypotheses simultaneously.
 The FDR is the expected proportion of false positives among all the significant results, and the Benjamini-Hochberg method controls this rate by adjusting the p-values for each hypothesis being tested. Specifically, the method sets a threshold for the p-values based on the FDR and rejects all null hypotheses with p-values below this threshold.
 By controlling the FDR, the Benjamini-Hochberg method provides a way to account for the increased chance of false positives when testing multiple hypotheses, and helps to reduce the likelihood of making erroneous conclusions based on random chance.
-(source: Benjamini, Y., & Hochberg, Y. (1995). Controlling the false discovery rate: A practical and powerful approach to multiple testing. Journal of the Royal Statistical Society: Series B (Methodological), 57(1), 289-300.)
+(2)
 
 Get our top 10 hits, including the p-values, hgnc symbol names, logFC between WT and KO states
 Avg expression, t-value for t-test, p-value, and adjusted p-value
-```{r}
+```{r message=FALSE}
 kable(output_hits[1:10,2:8],type="html",row.names = FALSE)
 
 ```
@@ -453,7 +460,7 @@ length(which(output_hits$adj.P.Val < 0.000000001))
 ```
 
 Heatmap for just significant differential expressed genes
-```{r}
+```{r message=FALSE}
 #adjusted p-value less than 0.000000001
 top_hits <- output_hits$ensembl_gene_id[
   output_hits$adj.P.Val<0.000000001]
@@ -511,7 +518,7 @@ current_heatmap <- Heatmap(as.matrix(heatmap_matrix_tophits),
 
 This is the heatmap only for the strongest signal genes. There is a very clear 
 differential expression between the top hit genes.
-```{r}
+```{r message=FALSE}
 current_heatmap
 ```
 
@@ -520,7 +527,7 @@ Since there seems to be a lot of significant differential expression, i performe
 evaluations gave me the correct results. 
 
 
-```{r}
+```{r message=FALSE}
 library(edgeR)
 #setup edgeR object
 d = DGEList(counts=filtered_data_matrix, group=samples)
@@ -535,7 +542,7 @@ fit <- glmQLFit(d, model_design)
 
 Perform differential expression to grab the top hists
 It is evident the the p-values are still very significant.
-```{r}
+```{r message=FALSE}
 #Choose sample KO
 #calculate differential expression
 qlf.pos_vs_neg <- glmQLFTest(fit, coef='samplesKO')
@@ -547,7 +554,7 @@ Number of genes that pass 0.0000000000000000001 threshold to capture the most si
 Again, I had to use stringent p-values since I had a lot of differentially expressed genes as was necessary 
 performing this calculation using the limma package. This time, the number of genes that passed correction was
 still above 1972 genes. 
-```{r}
+```{r message=FALSE}
 qlf_output_hits <- topTags(qlf.pos_vs_neg,sort.by = "PValue",
                            n = nrow(normalized_count_data))
 #number of genes that pass threshold p-value
@@ -560,7 +567,7 @@ length(which(qlf_output_hits$table$FDR < 0.0000000000000000001))
 
 I will again create a heatmap using QLF data this time. 
 I am looking for the WT and KO top hit genes.
-```{r}
+```{r message=FALSE}
 top_hits <- rownames(qlf_output_hits$table)[output_hits$P.Value<0.00000000000000001] 
 heatmap_matrix_tophits <- t(
   scale(t(heatmap_matrix[which(rownames(heatmap_matrix) 
@@ -587,7 +594,7 @@ current_heatmap <- Heatmap(as.matrix(heatmap_matrix_tophits),
                                show_heatmap_legend = TRUE)
 ```
 
-```{r}
+```{r message=FALSE}
 current_heatmap
 ```
 Above is the visualization of the top hits using a heatmap. The conditions WT and KO cells
@@ -601,21 +608,16 @@ The plot shows the log fold change versus the average expression level of each g
 The gene of interest includes BRCA1 as mentioned in the introduction. I will highlight genes of interest.
 Do MA plot of differentially expressed genes after filtering p-values
 
-#TODO How to interpret this plot and how to label the BRca1 genes
-```{r}
-#change to significant diff exp genes
-limma::plotMA(fit2, main="MA of the genes expression level change", ylim=c(-2,2), xlim=c(0,15))
 
-```
 
 Number of Upregulated genes: 1085
-```{r}
+```{r message=FALSE}
 length(which(qlf_output_hits$table$PValue < 0.000000000000000001 
              & qlf_output_hits$table$logFC > 0))
 ```
 
 number of downregulated genes: 1098
-```{r}
+```{r message=FALSE}
 length(which(qlf_output_hits$table$PValue < 0.000000000000000001 
              & qlf_output_hits$table$logFC < 0))
 ```
@@ -630,7 +632,7 @@ Rank: up/down regulation with +/- and significance with magnitude of the rank
 
 From the Paper, it is expected that the KO cells have downregulation of the BRCA1 genes.
 In fact, the BRCA1 is significantly downregulated in our data. 
-```{r}
+```{r message=FALSE}
 #merge gene names with the top hits
 qlf_output_hits_withgn <- merge(cpms_annot[,1:2],qlf_output_hits, by.x=1, by.y = 0)
 #higher number the smaller p-value, + if upregulated, - if downregulated
@@ -671,33 +673,96 @@ There are multiple methods to perfom this task. I chose G:profiler because it is
 for human data, uses Fischer exact test, and it is used to perform ORA analysis. Many methofds are very similar to the G:profler method. 
 <br/>
 
-#TODO: What is this question asking? 
-#How to do this part of the analysis? 
 
 **Question: What annotation data did you use and why? What version of the annotation are you using?** <br/> 
-I will use the down-regulated set of annotated data to perform pathway analysis since
-in the paper, the authors discuss that BRCA2 which is their gene of interest is down-regulated. 
+For the analysis, I used the recommended GO biological process to have access to all of the biological processes, No electronic GO annotations since they might not have up to date data in the electronic annotations, Reactome, and wikipathways for pathway analysis. I di dnot choose KEGG since it is subscription based, and the non-subscribed user will get access to non-up to date data.
+Version of the annotation is e108_eg55_p17_0254fbf, which is ensembl 108.
+<br/>
+
+![G:profiler annotation data sources](figures/gprofiler_downregulated/3.png)
+
 <br/>
 
 **Question: How many genesets were returned with what thresholds?** <br/> 
+I downloaded the GEM files of the Upregulated and downregulated pathways and counted the number of genesets. The threshold chosen in g:profiler was 0.05 using BH.
+<br/>
 
+I made the term size 3 to 200 so relevant genes are matches to the pathways.
+<br/>
+
+DownRegulated number of genesets:
+6696 gene sets are downregulated.
+```{r message=FALSE}
+down_genesets <- read.csv("data/g_profiler/down_regulated/gprofiler.csv", header = TRUE)
+
+nrow(down_genesets)
+```
+Thresholds of all DownRegulated pathways:
+```{r message=FALSE}
+threshold_down <- data.frame(down_genesets$adjusted_p_value)
+```
+<br/>
+
+
+Upregulated gene sets:
+7403  gene sets are upregulated.
+```{r message=FALSE}
+up_genesets <- read.csv("data/g_profiler/up_regulated/gp2.csv", header = TRUE)
+
+nrow(up_genesets)
+```
+Thresholds of all up_Regulated pathways:
+```{r message=FALSE}
+threshold_up <- data.frame(up_genesets$adjusted_p_value)
+```
 <br/>
 
 **Question: Run the analysis using the up-regulated set of genes, and the down-regulated set of genes separately. How do these results compare to using the whole list (i.e all differentially expressed genes together vs. the up-regulated and down regulated differentially expressed genes separately)?** <br/> 
 
+All the differentially expressed genes are more than 2000 genes which cannot be handled by G:profiler. Hence, I did not use that in my analysis.  Hence, I was unable to have access to the over-expression analysis for all differentially expressed data. However, the difference between the upregulated and down regulated genes are described below:
+<br/>
+
+Downregulated genes:
+![G:profiler results for DownRegulated genes](figures/gprofiler_downregulated/1.png)
+<br/>
+
+Up-regulated genes:
+![G:profiler results for upregulated genes](figures/gprofiler_up_reg/1.png)
 <br/>
 
 
-**Question: Do the over-representation results support conclusions or mechanism discussed in the original paper?** <br/> 
-Over-representation results refer to the identification of biological pathways 
-or functional categories that are significantly overrepresented in a set of 
-differentially expressed genes as compared to what would be expected by chance.
+Pathway analysis results:
+
+Upregulated genes:
+The pathways associate with up-regulated genes has genes involved in basement memberane organization from the GO results with 11 of the upregulated genes being involved in that pathway, laminin interactions with 18 of the upregulated genes being involved in that pathway from the reactome analysis, and glucocorticoid receptor pathway with18 of the genes from the up-regulated set being involved in that pathway from the wikipathways analysis,  as the top hit. However, as evident from the paper, the genes of interest in this study are the down-regulated genes which should be involved in DNA repair. Hence, the pathways involved in up-regulation are not of much importance in my anaylsis as it is not the focus of the paper.
+<br/>
+
+![G:profiler pathway results for upregulated genes for GO biological processes](figures/gprofiler_up_reg/3.png)
+<br/>
+
+![G:profiler pathway results for upregulated genes for Reactome pathways](figures/gprofiler_up_reg/4.png)
+<br/>
+
+![G:profiler pathway results for upregulated genes for wiki pathways](figures/gprofiler_up_reg/5.png)
+<br/>
+
+Downregulated genes:
+
+In the paper, they analyse the downregulation of genes upon the knockout of DDX39B gene. It is evident that the down-regulation results show that the downregulated genes have correspondence to DNA repair and organization pathways as seen in the g-profiler results. From the GO results, there are 72 genes that are correspondent to mitotic sister chromatid segragation, from the reactome pathways, 76 downregulated genes are associated with rRNA processing in the nucleas, and from the wikipaths analysis, 50 genes are associated with cytoplasmic ribosomal proteins analysis in the top hits. These pathways are closely related to DNA repair pathways as predicted by the paper. The paper had hypothesized that the down-regulated genes are associated with the DNA repair pathways and indeed, these pathways metioned in G-profiler are closely assosiated wit the DNA repair pathways. 
 
 
+<br/>
 
-**Question: Can you find evidence, i.e. publications, to support some of the results that you see. How does this evidence support your results?** <br/> 
+![G:profiler pathway results for Downregulated genes for GO biological processes](figures/gprofiler_downregulated/4.png)
+<br/>
+
+![G:profiler pathway results for Downregulated genes for Reactome biological pathways](figures/gprofiler_downregulated/5.png)
+<br/>
+
+![G:profiler pathway results for Downregulated genes for wikipathways](figures/gprofiler_downregulated/6.png)
 
 
+<br/>
 
 ## ORA with upregulated genes
 
@@ -713,11 +778,29 @@ what I used for correcting for multiple hypothesis testing.
 9- Download GEM file
 
 For this dataset, I do not expect any important information since from the paper, I know that the downregulated data are most important.
+<br/>
 
 ## ORA with downregulated genes
 
 Many pathways are above the threshold in G:profiler as expected since in the paper
 the downregulation of genes are mostly analysed. 
+<br/>
+
+# Interpretation
+
+Relating the results back to initial data and question:
+<br/>
+
+**Question: Do the over-representation results support conclusions or mechanism discussed in the original paper?** <br/> 
+Yes, the overexpression results support the conclusions made in the paper. As mentioned earlier, in the paper, they analyse the downregulation of genes upon the knockout of DDX39B gene. They saw that upon the knockout of DDX29B, many of the genes corresponding to the DNA repair pathway, including genes like BRCA1 are significantly downregulated. This means that the knockout of these genes will prevent the cell from being able to repair its damaged DNA, which make the cell vulnerable to chemotheraputuce agents. From our over-representation analysis using G:profiler, we found that the downregulated genes, were over-represented in the pathways that correspond to DNA repair and regulation. 
+
+It is evident that the down-regulation results show that the downregulated genes have correspondence to DNA repair and organization pathways. 
+<br/>
+
+**Question: Can you find evidence, i.e. publications, to support some of the results that you see. How does this evidence support your results?** <br/> 
+
+In the paper by Chabalier et.al. they show that the downregualation of BRCA1 which is an improtant downregulated gene in the paper by Xu et. al. effects the chromosome related pathways including  inactivation of the spindlecheckpoint. This pathway is related to the mitotic sister chromatid segragation which is related to the inactivation of the spindle checkpoint. Hence, the downregualted genes from my results do in fact show the downregulation of genes in a similar pathway as BRCA1 which have functions in DNA repair. 
+
 
 # References
 
