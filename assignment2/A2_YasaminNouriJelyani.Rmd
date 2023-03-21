@@ -227,6 +227,10 @@ counts_density <- apply(log2(edgeR::cpm(genes_filtered[,2:7])),
  border ="blue", text.col = "green4", 
  merge = TRUE, bg = "gray90")
 ```
+<br/>
+**Figure 1:** Density plot for distribution of genes in six samples
+<br/>
+<br/>
 
 Data distribution boxplot: 
 ```{r warning=FALSE}
@@ -239,6 +243,10 @@ boxplot(data2plot, xlab = "Samples", ylab = "log2 CPM",
 abline(h = median(apply(data2plot, 2, median)), 
  col = "green", lwd = 0.6, lty = "dashed")
 ```
+<br/>
+**Figure 2:** Box plot for distribution of genes in six samples
+<br/>
+<br/>
 
 Plotting normalization by distribution method
 ```{r warning=FALSE}
@@ -246,6 +254,10 @@ limma::plotMA(log2(DDX39B_exp[,c(4,5)]), ylab="M - ratio log expression",
  main="DDX39B KO vs WT sample")
 
 ```
+<br/>
+**Figure 3:** MA plot for Average Log expression and ratio log expression of genes in six samples
+<br/>
+<br/>
 
 
 ## MDS plot of normalized data
@@ -258,6 +270,10 @@ normalized_counts <- edgeR::cpm(d)
 limma::plotMDS(normalized_counts, main="MDS plot of DDX39B KO and WT"
  )
 ```
+<br/>
+**Figure 4:** MDS plot for clustering of the six samples (3 WT and 3 KO)
+<br/>
+<br/>
 
 
 ```{r warning=FALSE}
@@ -326,8 +342,12 @@ From the MDS plot, there is evidence of the cluster of KO and WT which are the f
 <br/>
 
 
-![MDS plot of normalised data from A1](images/mds_plot.png)
+![](images/mds_plot.png)
 <br/>
+**Figure 5:** MDS plot of normalised data from A1
+<br/>
+<br/>
+
 
 Reading the normalized expression data from assignment 1
 ```{r warning=FALSE}
@@ -372,7 +392,10 @@ Variability at the WT vs KO. The WT and KO seem to have very different gene expr
 ```{r warning=FALSE}
 current_heatmap
 ```
-
+<br/>
+**Figure 6:** Heatmap for WT and KO gene expression data set
+<br/>
+<br/>
 
 Look at expression data and see difference of expression of the genes.
 ```{r warning=FALSE}
@@ -522,7 +545,10 @@ differential expression between the top hit genes.
 ```{r warning=FALSE}
 current_heatmap
 ```
-
+<br/>
+**Figure 7:** Heatmap for WT and KO gene expression data set using limma
+<br/>
+<br/>
 
 Since there seems to be a lot of significant differential expression from the plot, I performed the same significance testing above using edgeR for calculating differential Expression to ensure that my results are valid. Indeed, the edgeR 
 evaluations gave me the correct results. 
@@ -598,6 +624,10 @@ current_heatmap <- Heatmap(as.matrix(heatmap_matrix_tophits),
 ```{r warning=FALSE}
 current_heatmap
 ```
+<br/>
+**Figure 8:** Heatmap for WT and KO gene expression data set using edgeR
+<br/>
+<br/>
 
 Above is the visualization of the top hits using a heatmap. The conditions WT and KO cells
 clearly cluster together with WT clearly having all the genes analysed differentially expressed
@@ -671,9 +701,12 @@ For the analysis, I used the recommended GO biological process to have access to
 Version of the annotation is e108_eg55_p17_0254fbf, which is ensembl 108.
 <br/>
 
-![G:profiler annotation data sources](figures/gprofiler_downregulated/3.png)
-
+![](figures/gprofiler_downregulated/3.png)
 <br/>
+**Figure 9:** g-profiler annotation data sources
+<br/>
+<br/>
+
 
 **Question 6: How many genesets were returned with what thresholds?** <br/> 
 I downloaded the GEM files of the Upregulated and downregulated pathways and counted the number of genesets. The threshold chosen in g:profiler was 0.05 using Benjamin Hoffberger method for adjustment.
@@ -737,12 +770,17 @@ the downregulation of genes are mostly analysed.
 
 
 Downregulated genes:
-![G:profiler results for DownRegulated genes](figures/gprofiler_downregulated/1.png)
+![](figures/gprofiler_downregulated/1.png)
+
+<br/>
+**Figure 10:** g-profiler results for DownRegulated genes
 <br/>
 <br/>
 
 Up-regulated genes:
-![G:profiler results for upregulated genes](figures/gprofiler_up_reg/1.png)
+![](figures/gprofiler_up_reg/1.png)
+<br/>
+**Figure 11:** g-profiler results for upregulated genes
 <br/>
 <br/>
 
@@ -756,14 +794,24 @@ The pathways associate with up-regulated genes has genes involved in basement me
 However, as evident from the paper, the genes of interest in this study are the down-regulated genes due to DDX39B knockout, which these genes should be involved in DNA repair. Hence, the pathways involved in up-regulation are not of much importance in my analysis as it is not the focus of the paper.
 <br/>
 
-![G:profiler pathway results for upregulated genes for GO biological processes](figures/gprofiler_up_reg/3.png)
+![](figures/gprofiler_up_reg/3.png)
+<br/>
+**Figure 12:** g-profiler pathway results for upregulated genes for GO biological processes
+<br/>
 <br/>
 
-![G:profiler pathway results for upregulated genes for Reactome pathways](figures/gprofiler_up_reg/4.png)
+![](figures/gprofiler_up_reg/4.png)
+<br/>
+**Figure 13:** g-profiler pathway results for upregulated genes for Reactome pathways
+<br/>
 <br/>
 
-![G:profiler pathway results for upregulated genes for wiki pathways](figures/gprofiler_up_reg/5.png)
+![](figures/gprofiler_up_reg/5.png)
 <br/>
+**Figure 14:** g-profiler pathway results for upregulated genes for wiki pathways
+<br/>
+<br/>
+
 
 ### Downregulated genes: <br/>
 
@@ -772,15 +820,23 @@ In the paper, they analyse the downregulation of genes upon the knockout of DDX3
 
 <br/>
 
-![G:profiler pathway results for Downregulated genes for GO biological processes](figures/gprofiler_downregulated/4.png)
+![](figures/gprofiler_downregulated/4.png)
+<br/>
+**Figure 15:** g-profiler pathway results for Downregulated genes for GO biological processes
+<br/>
 <br/>
 
-![G:profiler pathway results for Downregulated genes for Reactome biological pathways](figures/gprofiler_downregulated/5.png)
+![](figures/gprofiler_downregulated/5.png)
+<br/>
+**Figure 16:** g-profiler pathway results for Downregulated genes for Reactome biological pathways
+<br/>
 <br/>
 
-![G:profiler pathway results for Downregulated genes for wikipathways](figures/gprofiler_downregulated/6.png)
 
-
+![ ](figures/gprofiler_downregulated/6.png)
+<br/>
+**Figure 17:** g-profiler pathway results for Downregulated genes for wikipathways
+<br/>
 <br/>
 
 
