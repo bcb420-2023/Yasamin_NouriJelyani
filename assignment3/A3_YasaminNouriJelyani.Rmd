@@ -213,5 +213,7 @@ The most important aspect of the analysis is relating your results back to the i
 **Question 11:Choose a specific pathway or theme to investigate in more detail. Why did you choose this pathway or theme? Show the pathway or theme as a gene network or as a pathway diagram. Annotate the network or pathway with your original log fold expression values and p-values to show how it is effected in your model. (Hint: if the theme or pathway is not from database that has detailed mechanistic information like Reactome you can use apps like GeneMANIA or String to build the the interaction network.)** <br/>
 
 
+# TODO ask for gsea, bader lab, cytoscape bib ref
+
 # References
 
