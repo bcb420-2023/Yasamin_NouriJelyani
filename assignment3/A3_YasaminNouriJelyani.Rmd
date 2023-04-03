@@ -94,6 +94,11 @@ Initially, I downloaded the raw data for my analysis. I then cleaned and normali
 I also plotted an MDS plot for visualizing the control and knockout clustering. It is clear from the figure that the KO and WT samples cluster together. 
 
 ![MDS plot result](images/fig2.png)
+<br/>
+**Figure 1:** MDS plot of normalised data from Assignment 1
+<br/>
+<br/>
+
 
 I then read the data that was normalized and visualized the gene variability between the KO and WT samples using a heatmap. 
 
@@ -106,6 +111,11 @@ normalized_count_data <- read.table(file=file.path(getwd(),"data",
 ```
 
 ![Heatmap plot result](images/fig3.png)
+<br/>
+**Figure 2:** Heatmap of WT and KO gene expression data set 
+<br/>
+<br/>
+
 Variability at the WT vs KO. The WT and KO seem to have very different gene expression levels.
 
 I also performed edgeR analysis of the data and found the ranks. 
@@ -176,11 +186,23 @@ Blue nodes: downregulated pathways, are seen to have associations with DNA repai
 For instance, the figure from the image below indicates that the downregulated genes in the blue nodes correspond to BRCA1 downregulation and DNA double strated repair as it was mentioned in the paper. 
 
 ![cytoscape result](images/fig1.png)
-Figure 2: Downregulated pathways annotated with genes that correspond to DNA repair as expected. 
-
+<br/>
+**Figure 3:** Downregulated pathways annotated with genes that correspond to DNA repair as expected.
+<br/>
+<br/>
 
 From the network results, it is evident that the up-regulated genes do not significantly map to the geneset pathways (as shown in the red nodes, there are only 3 pathways that are significantly upregulated from my gene set) and as expected, the down-regulated genes have many pathway nodes in the graph representation were the focus group of the study. 
 ![cytoscape result](images/fig4.png)
+<br/>
+**Figure 4:** Downregulated pathways The downregulated genesets are blue nodes and upregulated are red nodes
+<br/>
+<br/>
+
+![cytoscape result](images/legend_fig4.png)
+<br/>
+**Figure 5:** Legend for pathways networkf in figure 4
+<br/>
+<br/>
 
 
 
@@ -194,11 +216,25 @@ I will use default parameters: (From lecture notes)
 Leading edge genes are withing the enrichment that come before the max enrichment score. These drive this enrichment and make this set have a high score. Looking at leading edge genes.
 
 
-# TODO: how to do this?
 **Question 6: Make a publication ready figure - include this figure with proper legends in your notebook.** <br/>
+
+![cytoscape result](images/results_non_threshold.GseaPreranked.png)
+<br/>
+**Figure 6:** Figure for the different gene sets analysed as a publication ready figure.
+<br/>
+<br/>
+
+
+![cytoscape result](images/legened_fig_6.png)
+<br/>
+**Figure 7:** Legend for pathways network in figure 6
+<br/>
+<br/>
+
 
 **Question 7: Collapse your network to a theme network. What are the major themes present in this analysis? Do they fit with the model? Are there any novel pathways or themes?** <br/>
 
+Some themes in the downregulated genes include telomere maintanence, template DNA replication, repair recombination. These are patway themes that are mentioned to be downregulated in the paper by Xu et. al. Hence, it is significant to see the group of downregulated pathways are shown to be related to the DNA repair pathway. 
 
 **Question 8: Present your results with the use of tables and screenshots. All figures should have appropriate figure legends. If using figures create a figures directory in your repo and make sure all references to the figures are relative in your Rmarkdown notebook.** <br/>
 
