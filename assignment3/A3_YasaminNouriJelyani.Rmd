@@ -40,54 +40,6 @@ WT: wild type <br/>
 <br/><br/>
  
  
-```{r eval=FALSE}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-if (!requireNamespace("GEOmetadb", quietly = TRUE))
-    BiocManager::install("GEOmetadb")
-if(!requireNamespace("knitr", quietly=TRUE))
-  install.packages("knitr")
-if(! requireNamespace("edgeR", quietly=TRUE))
-  BiocManager::install("edgeR")
-if (!requireNamespace("GEOquery", quietly=TRUE))
-  BiocManager::install("GEOquery")
-if (!requireNamespace("biomaRt", quietly = TRUE)){
-  install.packages("biomaRt")}
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-if (!require("stringr", quietly = TRUE))
-    install.packages("stringr")
-if (!require("dplyr", quietly = TRUE))
-    install.packages("dplyr")
-
-if (!require("Biobase", quietly = TRUE))
-    install.packages("Biobase")
-
-if (!require("kableExtra", quietly = TRUE))
-    install.packages("kableExtra")
-if( !file.exists("GEOmetadb.sqlite") ) {
-    demo_sqlfile <- getSQLiteFile(destdir = getwd(), destfile = "GEOmetadb.sqlite.gz", type = "demo")
-} else {
-    demo_sqlfile <- "GEOmetadb.sqlite"
-}
-if (!require("magrittr", quietly = TRUE))
-    install.packages("magrittr") # package installations are only needed the first time you use it
-
-```
-
-```{r eval=FALSE}
-library(dplyr)
-library(magrittr)
-library(knitr)
-library(Biobase)
-library(GEOmetadb)
-library(biomaRt)
-library(ComplexHeatmap)
-library(circlize)
-library(edgeR)
-
-``` 
- 
 # Assignment 1 and 2 Recap
 
 Initially, I downloaded the raw data for my analysis. I then cleaned and normalized the data. 
@@ -218,26 +170,30 @@ Leading edge genes are withing the enrichment that come before the max enrichmen
 
 **Question 6: Make a publication ready figure - include this figure with proper legends in your notebook.** <br/>
 
-![cytoscape result](images/results_non_threshold.GseaPreranked.png)
+![cytoscape result](images/pub_ready_figure.png)
 <br/>
-**Figure 6:** Figure for the different gene sets analysed as a publication ready figure.
+**Figure 6:** Figure for the different gene sets analysed. The important pathway sets are highlighted with their names. The legend shows the desciption of the graph. The DNA repair pathway is represented by the top most cluster and the DNA doubple stranded pathway is highlighted with green text. 
 <br/>
 <br/>
 
-
-![cytoscape result](images/legened_fig_6.png)
-<br/>
-**Figure 7:** Legend for pathways network in figure 6
-<br/>
-<br/>
 
 
 **Question 7: Collapse your network to a theme network. What are the major themes present in this analysis? Do they fit with the model? Are there any novel pathways or themes?** <br/>
 
 Some themes in the downregulated genes include telomere maintanence, template DNA replication, repair recombination. These are patway themes that are mentioned to be downregulated in the paper by Xu et. al. Hence, it is significant to see the group of downregulated pathways are shown to be related to the DNA repair pathway. 
 
-**Question 8: Present your results with the use of tables and screenshots. All figures should have appropriate figure legends. If using figures create a figures directory in your repo and make sure all references to the figures are relative in your Rmarkdown notebook.** <br/>
+![cytoscape result](images/results_non_threshold.GseaPrerankedcollapse3.png)
+<br/>
+**Figure 7:** Theme collapsed figure for the network
+<br/>
+<br/>
 
+
+![cytoscape result](images/collapsed_zoom.png)
+<br/>
+**Figure 8:** Themes of interest are the donwregulated pathways relate to DNA repair. These pathways inclide base excision pathways, homologous hdr strand.Replication stress DNA, etc.
+<br/>
+<br/>
 
 
 
@@ -257,18 +213,27 @@ As mentioned in assignment 2, in the paper by Chabalier et.al. they show that th
 I have chosen the  DNA Double-Strand Break Repair pathway which is the path number 5693532 on wikipathways. This pathway is very significant to my analysis because in the publication, the KO genes of the DDX39B complex cause a downregulation of the DNA Double-Strand Break Repair pathways. Specifically, the BRCA2 genes are downregualted. 
 
 ![cytoscape result](images/fig5.png)
-Figure: Wikipathway DNA Double-Strand Break Repair pathway which is the path number 5693532 on wikipathways
+<br/>
+**Figure 9:** Wikipathway DNA Double-Strand Break Repair pathway which is the path number 5693532 on wikipathways
+<br/>
+<br/>
+
 
 From the geneMANIA view, overlapping the network pathway with the log expression values, BRCA1 is seen as downregulated in the pathway for DNA Double-Strand Break Repair pathway. This result again coincides with results from the paper which indicated that the KO of the DDX39B complex leads to the downregulated of the BRCA1 genes which effects the downregulated of DNA Double-Strand Break Repair pathway.
 
 ![cytoscape result](images/fig7.png)
-Figure: GeneMania of the DNA Double-Strand Break Repair pathway overlayed with the rank data. BRCA1 is downregulated as seen in the figure, and is highlighted in Yellow.
-
+<br/>
+**Figure 10:** GeneMania of the DNA Double-Strand Break Repair pathway overlayed with the rank data. BRCA1 is downregulated as seen in the figure, and is highlighted in Yellow.
+<br/>
+<br/>
 
 ![cytoscape result](images/fig6.png)
-Figure: Close up of GeneMania of the DNA Double-Strand Break Repair pathway overlayed with the rank data. BRCA1 is downregulated as seen in the figure. 
-
- 
+<br/>
+**Figure 11:** Close up of GeneMania of the DNA Double-Strand Break Repair pathway overlayed with the rank data. BRCA1 is downregulated as seen in the figure. 
+<br/>
+<br/>
 
 # References
 
+<br/>
+<br/>
