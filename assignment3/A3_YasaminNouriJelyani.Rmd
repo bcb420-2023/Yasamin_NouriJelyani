@@ -33,7 +33,7 @@ Among the genes that are regulated by DDX39B deficiency, 1483 genes were found t
 The researchers also performed qPCR and western blot to confirm that both the mRNA and protein levels of BRCA1 were decreased in DDX39B knock out HeLa cells. Researchers also found that the regulation on BRCA1 is specific to DDX39B and no other DDX homologues.
 <br/>
 <br/>
-All in all, these data suggest that DDX39B participates in DNA repair pathway via upregulating BRCA1 at the mRNA level. <br/><br/>
+All in all, these data suggest that DDX39B participates in DNA repair pathway via up-regulating BRCA1 at the mRNA level. <br/><br/>
 
 KO: DDX39B knockout genes <br/>
 WT: wild type <br/>
