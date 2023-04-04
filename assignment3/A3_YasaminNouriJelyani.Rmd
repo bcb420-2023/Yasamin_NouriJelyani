@@ -234,5 +234,3 @@ From the geneMANIA view, overlapping the network pathway with the log expression
 
 # References
 
-<br/>
-<br/>
