@@ -120,6 +120,7 @@ However, I can identify significant gene sets by looking for gene sets that have
 From the pathways that I notice in the GSEA output results, especially the DNA Double-Strand Break Repair pathway downregulated gene-sets, are very interesting among the pathways that are shown. This pathway was analyzed in the paper by Xu et.al and was downregualted upon DDX39B knockout in their research as well. Hence, this pathway as expected, is in the downregulated genesets. 
 Additionally, other pathways related to telomere organization, and BRCA1 regualtion are in the downregulated genesets. Hence, these results confirm the results from the paper by Xu et. al. that also show downregualtion of these pathways upon knockout of the DDX39B complex. 
 
+Note that for the analysis, I filtered for a minimum of 15 genes and a maximum of 200 genes in my pathway.
 
 ## Visualize your Gene set Enrichment Analysis in Cytoscape
 Cytoscape translates enrichment results to a network. 
