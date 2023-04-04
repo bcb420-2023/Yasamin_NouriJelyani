@@ -64,15 +64,12 @@ normalized_count_data <- read.table(file=file.path(getwd(),"data",
 
 ![Heatmap plot result](images/fig3.png)
 <br/>
-**Figure 2:** Heatmap of WT and KO gene expression data set 
+**Figure 2:** Heatmap of WT and KO gene expression data set. Variability at the WT vs KO. The WT and KO seem to have very different gene expression levels.
 <br/>
 <br/>
 
-Variability at the WT vs KO. The WT and KO seem to have very different gene expression levels.
 
 I also performed edgeR analysis of the data and found the ranks. 
-
-
 ```
 qlf_output_hits_withgn[,"rank"] <- -log(qlf_output_hits_withgn$PValue,base =10) * sign(qlf_output_hits_withgn$logFC)
 qlf_output_hits_withgn <- qlf_output_hits_withgn[order(qlf_output_hits_withgn$rank),]
@@ -83,13 +80,13 @@ There results are written to the data directory in the file qlf_output_hits_with
 
 
 
-From the over-representation results, we found that the over-representation results support the conclusions made in the paper by Xu et.al. As mentioned earlier, in the paper, they analyse the downregulation of genes upon the knockout of DDX39B gene. They saw that upon the knockout of DDX29B, many of the genes corresponding to the DNA repair pathway, including genes like BRCA1 are significantly downregulated. This means that the knockout of these genes will prevent the cell from being able to repair its damaged DNA, which make the cell vulnerable to chemotherapeutic agents. From our over-representation analysis using G:profiler, we found that the downregulated genes, were over-represented in the pathways that correspond to DNA repair and regulation which supports the mechanism discussed in the paper. 
+From the over-representation results, we found that the results support the conclusions made in the paper by Xu et.al. As mentioned earlier, in the paper, they analyse the downregulation of genes upon the knockout of DDX39B gene. They saw that upon the knockout of DDX29B, many of the genes corresponding to the DNA repair pathway, including genes like BRCA1 are significantly downregulated. This means that the knockout of these genes will prevent the cell from being able to repair its damaged DNA, which make the cell vulnerable to chemotherapeutic agents. From our over-representation analysis using G:profiler, we found that the downregulated genes, were over-represented in the pathways that correspond to DNA repair and regulation which supports the mechanism discussed in the paper. 
 
-All in all, it is evident that the down-regulation results show that the downregulated genes have correspondence to DNA repair and organization pathways. 
+All in all, it is evident that the over-representation results show that the downregulated genes have correspondence to DNA repair and organization pathways. 
 <br/>
 
 
-In the paper by Chabalier et.al. they show that the downregualation of BRCA1 which is an improtant downregulated gene in the paper by Xu et. al. effects the chromosome related pathways including  inactivation of the spindlecheckpoint. This pathway is related to the mitotic sister chromatid segragation which is related to the inactivation of the spindle checkpoint as seen in the G:profiler resilts. Hence, the downregualted genes from my over-representation results do in fact show the downregulation of genes in a similar pathway as BRCA1 which have functions in DNA repair. 
+In the paper by Chabalier et.al. they show that the downregualation of BRCA1 which is an improtant downregulated gene in the paper by Xu et. al. effects the chromosome related pathways including  inactivation of the spindlecheckpoint. This pathway is related to the mitotic sister chromatid segragation which is related to the inactivation of the spindle checkpoint as seen in the G:profiler results. Hence, the downregualted genes from my over-representation results do in fact show the downregulation of genes in a similar pathway as BRCA1 which have functions in DNA repair. 
 <br/>
 
 
@@ -105,10 +102,10 @@ I used GSEA for my non-thresholded gene set enrichment analysis using the ranked
 <br/>
 
 **Question 2: What genesets did you use? Make sure to specify versions and cite your methods.?** <br/> 
-I downloaded Bader lab data it has the Reactome, Go, wikipathways, database gene sets which it pull regularly. So I will use these as me genesets because they are up to date.
+I downloaded Bader lab data. It includes the Reactome, Go, and wikipathways database gene sets which are pulled regularly. So I will use these as my genesets because they are up to date.
 I use the: Human_GOBP_AllPathways_no_GO_iea_March_02_2023_symbol.gmt
 From the website https://download.baderlab.org/EM_Genesets/current_release/Human/symbol/.
-These contain collection from March 1, 2021 containing GO biological process, no IEA and pathways.
+These contain collection from March 1, 2021 containing GO biological process, and no IEA and pathways.
 <br/>
 
 
@@ -120,8 +117,8 @@ uses FDR 0.25 does not provide meaningful pathways. I will plot my network to re
 
 However, I can identify significant gene sets by looking for gene sets that have a statistically significant enrichment score and a low p-value. These are the gene sets that are most likely to be biologically relevant.
 
-From the pathways that I notice in the GSEA output results, in the like of downregulated genesets, the is very interesting. This pathway was analyzed in the paper by Xu et.al and was downregualted upon DDX39B knockout. Hence, this pathway as expected, is in the downregulated genesets. 
-Additionally, other pathways related to telomere organization, double stranded breakage repair, and BRCA1 regualtion are in the downregulated genesets. Hence, this confirms the results from Xu et. al. that also saw downregualtion of these pathways upon knowckout of the DDX39B complex. 
+From the pathways that I notice in the GSEA output results, especially the DNA Double-Strand Break Repair pathway downregulated gene-sets, are very interesting among the pathways that are shown. This pathway was analyzed in the paper by Xu et.al and was downregualted upon DDX39B knockout in their research as well. Hence, this pathway as expected, is in the downregulated genesets. 
+Additionally, other pathways related to telomere organization, and BRCA1 regualtion are in the downregulated genesets. Hence, these results confirm the results from the paper by Xu et. al. that also show downregualtion of these pathways upon knockout of the DDX39B complex. 
 
 
 ## Visualize your Gene set Enrichment Analysis in Cytoscape
@@ -129,13 +126,13 @@ Cytoscape translates enrichment results to a network.
 
 **Question 4: Create an enrichment map - how many nodes and how many edges in the resulting map? What thresholds were used to create this map? Make sure to record all thresholds. Include a screenshot of your network prior to manual layout** <br/>
 
-There are 208 nodes and 1994 edges in the emrichment map network. 
+There are 208 nodes and 1994 edges in the enrichment map network. 
 
-Used Scientific notation p-value 5e-08 to narrow down the pathways that are considered significant. 
-A node is a gene set/pathway, and an edge is the similarity between the gene sets.  
+I used a p-value (in scientific notation) of 5e-08 to narrow down the pathways that are considered significant. 
+A node in the network represents a gene-set or pathway, and an edge represents the similarity between the gene sets.  
 
-Blue nodes: downregulated pathways, are seen to have associations with DNA repair as mentioned from the paper. The red nodes are upregulated and the pathway is not of significant interest as regards to our paper. 
-For instance, the figure from the image below indicates that the downregulated genes in the blue nodes correspond to BRCA1 downregulation and DNA double strated repair as it was mentioned in the paper. 
+The blue nodes show the downregulated pathways, and are seen to have associations with DNA repair pathways as mentioned from the paper. The red nodes are upregulated and the pathway is not of significant interest with regards to the research performed by Xu et.al. 
+For instance, Figure 3 indicates that the downregulated genes in the blue nodes correspond to BRCA1 downregulation and DNA double strated repair as it was mentioned in the paper. 
 
 ![cytoscape result](images/fig1.png)
 <br/>
@@ -143,20 +140,21 @@ For instance, the figure from the image below indicates that the downregulated g
 <br/>
 <br/>
 
-From the network results, it is evident that the up-regulated genes do not significantly map to the geneset pathways (as shown in the red nodes, there are only 3 pathways that are significantly upregulated from my gene set) and as expected, the down-regulated genes have many pathway nodes in the graph representation were the focus group of the study. 
+From the network results, it is evident that the up-regulated genes do not significantly map to the geneset pathways. As shown in the red nodes, there are only 3 pathways that are significantly upregulated from my gene set. Also, as expected, the down-regulated genes have many pathway nodes in the graph representation, which are the focus group of the study by Xu et.al. 
 ![cytoscape result](images/fig4.png)
 <br/>
-**Figure 4:** Downregulated pathways The downregulated genesets are blue nodes and upregulated are red nodes
-<br/>
-<br/>
-
-![cytoscape result](images/legend_fig4.png)
-<br/>
-**Figure 5:** Legend for pathways networkf in figure 4
+**Figure 4:** Geneset Network: The downregulated genesets are blue nodes and upregulated are red nodes
 <br/>
 <br/>
 
 
+Below is Figure 4 as well as the network legend put into one figure. 
+
+![cytoscape result](images/fig_and_leg.png)
+<br/>
+**Figure 5:** Geneset Network: Complete network of gene sets including the legend
+<br/>
+<br/>
 
 **Question 5: Annotate your network - what parameters did you use to annotate the network. If you are using the default parameters make sure to list them as well.** <br/>
 I will use default parameters: (From lecture notes)
@@ -165,33 +163,34 @@ I will use default parameters: (From lecture notes)
 -label of the node corresponds to the geneset description
 -thickness of the edge corresponds to overlap statistic. The more genes two nodes have in common the thicker the edge (using overlap and Jaccard).
 
-Leading edge genes are withing the enrichment that come before the max enrichment score. These drive this enrichment and make this set have a high score. Looking at leading edge genes.
+Leading edge genes are within the enrichment that come before the max enrichment score. These drive this enrichment, and make this set have a high score.
 
-
+### Publication Ready Figure:
 **Question 6: Make a publication ready figure - include this figure with proper legends in your notebook.** <br/>
 
 ![cytoscape result](images/pub_ready_figure.png)
 <br/>
-**Figure 6:** Figure for the different gene sets analysed. The important pathway sets are highlighted with their names. The legend shows the desciption of the graph. The DNA repair pathway is represented by the top most cluster and the DNA doubple stranded pathway is highlighted with green text. 
+**Figure 6:** Figure for the different gene sets analysed. The important pathway sets are highlighted with their names. The legend shows the desciption of the graph. The DNA repair pathway is represented by the top most cluster. The DNA double stranded pathway that is of interest is highlighted with green text. 
 <br/>
 <br/>
 
 
+### Theme Network:
 
 **Question 7: Collapse your network to a theme network. What are the major themes present in this analysis? Do they fit with the model? Are there any novel pathways or themes?** <br/>
 
-Some themes in the downregulated genes include telomere maintanence, template DNA replication, repair recombination. These are patway themes that are mentioned to be downregulated in the paper by Xu et. al. Hence, it is significant to see the group of downregulated pathways are shown to be related to the DNA repair pathway. 
+Some themes in the downregulated genes include telomere maintanence, template DNA replication, repair recombination. These are pathways themes that are shown to be downregulated in the paper by Xu et. al. Hence, it is significant to see the group of downregulated pathways are shown to be related to the DNA repair pathway results. The meiosis DNA repair pathways are novel and are not discussed in the paper by Xu et.al. but many of the downregulated pathways correspond to meiotic pathways in this dataset.  
 
 ![cytoscape result](images/results_non_threshold.GseaPrerankedcollapse3.png)
 <br/>
-**Figure 7:** Theme collapsed figure for the network
+**Figure 7:** Theme collapsed figure for the network analysis
 <br/>
 <br/>
 
 
 ![cytoscape result](images/collapsed_zoom.png)
 <br/>
-**Figure 8:** Themes of interest are the donwregulated pathways relate to DNA repair. These pathways inclide base excision pathways, homologous hdr strand.Replication stress DNA, etc.
+**Figure 8:** Themes of interest are the donwregulated pathways relate to DNA repair. These pathways include base excision pathways, homologous hdr strand (which corresponds to DNA double stranded repair theme), Replication stress DNA, etc.
 <br/>
 <br/>
 
@@ -202,34 +201,34 @@ The most important aspect of the analysis is relating your results back to the i
 
 **Question 9: Do the enrichment results support conclusions or mechanism discussed in the original paper? How do these results differ from the results you got from Assignment #2 thresholded methods?** <br/>
 
-Yes, the enrichment results follow closely with the mechanism discussed in the paper. It is evident that as discussed in the paper by Xu et.al., upon knockout of the DDX39B complex, DNA break repair pathways including BRCA1 binding will be down regulated. Hence preventing the fixation of the DNA upon breakage. From the enrichment analysis results, it is clear that the downregulated pathways correspond to genesets involved in DNA Double-Strand Break Repair pathway, BRCA binding with the DNA, DNA repair pathways, etc. which are all downregulated in the DDX39B knowckout samples. This also corresponds to the threshold methods in assignment 2 which the downregulated genes were again shown to be involved in DNA repair pathways. Hence, the paper, enrichment results, and threshold methods all convey the same information about the downregulated genes upon DDX39B KO. They all show the downregulation of DNA repair pathways and also downregulation of BRCA1 binding to the DNA.
+Yes, the enrichment results follow closely with the mechanism discussed in the paper. It is evident that as discussed in the paper by Xu et.al., upon knockout of the DDX39B complex, DNA break repair pathways including BRCA1 binding will be down regulated. Hence preventing the repair of the DNA upon breakage. From the enrichment analysis results, it is clear that the downregulated pathways correspond to genesets involved in DNA Double-Strand Break Repair pathway, BRCA binding with the DNA, DNA repair pathways, etc. are all downregulated in the DDX39B knockout samples. This also follows from the threshold methods in assignment 2 which the downregulated genes were again shown to be involved in DNA repair pathways. eHnce, the results from the paper by Xu et.al, enrichment results, and threshold methods all convey the same information about the downregulated genes upon DDX39B Knock out. All of these results show the downregulation of DNA repair pathways and also downregulation of BRCA1 binding to the DNA upon knowckout of the DDX39B complex.
 
 **Question 10:Can you find evidence, i.e. publications, to support some of the results that you see. How does this evidence support your result?** <br/>
 
-As mentioned in assignment 2, in the paper by Chabalier et.al. they show that the downregualation of BRCA1 affects the chromosome related pathways including  inactivation of the spindlecheckpoint. This pathway is related to the mitotic sister chromatid segragation which is related to the inactivation of the spindle checkpoint which is involved in DNA repair. Also, in the paper by Turan et. al., they found that the downregulation of BRCA1 reduced DNA repair pathways/ Hence, the downregualted genes from my over-representation and enrichment results do in fact show the downregulation of genes in a similar pathway as BRCA1, have significant functions in DNA repair. 
+As mentioned in assignment 2, in the paper by Chabalier et.al. they show that the downregualation of BRCA1 affects the chromosome related pathways including  inactivation of the spindlecheckpoint. This pathway is related to the mitotic sister chromatid segragation which is related to the inactivation of the spindle checkpoint which is involved in DNA repair. Also, in the paper by Turan et. al., they found that the downregulation of BRCA1 reduced DNA repair pathways. Hence, the downregualted genes from my over-representation and enrichment results do in fact show the downregulation of genes in a similar pathway as BRCA1, have significant negative effects in DNA repair. 
 
 **Question 11:Choose a specific pathway or theme to investigate in more detail. Why did you choose this pathway or theme? Show the pathway or theme as a gene network or as a pathway diagram. Annotate the network or pathway with your original log fold expression values and p-values to show how it is effected in your model. (Hint: if the theme or pathway is not from database that has detailed mechanistic information like Reactome you can use apps like GeneMANIA or String to build the the interaction network.)** <br/>
 
-I have chosen the  DNA Double-Strand Break Repair pathway which is the path number 5693532 on wikipathways. This pathway is very significant to my analysis because in the publication, the KO genes of the DDX39B complex cause a downregulation of the DNA Double-Strand Break Repair pathways. Specifically, the BRCA2 genes are downregualted. 
+I have chosen the  DNA Double-Strand Break Repair pathway which is the path number 5693532 on wikipathways. This pathway is very significant to my analysis because in the publication by Xu et.al, the KO genes of the DDX39B complex cause a downregulation of the DNA Double-Strand Break Repair pathways. Specifically, the BRCA2 genes are downregualted. 
 
 ![cytoscape result](images/fig5.png)
 <br/>
-**Figure 9:** Wikipathway DNA Double-Strand Break Repair pathway which is the path number 5693532 on wikipathways
+**Figure 9:** Wikipathway DNA Double-Strand Break Repair pathway which is the path number 5693532 on wikipathways. This shows the effect of this pathway on the binding on DNA repair proteins as well.
 <br/>
 <br/>
 
 
-From the geneMANIA view, overlapping the network pathway with the log expression values, BRCA1 is seen as downregulated in the pathway for DNA Double-Strand Break Repair pathway. This result again coincides with results from the paper which indicated that the KO of the DDX39B complex leads to the downregulated of the BRCA1 genes which effects the downregulated of DNA Double-Strand Break Repair pathway.
+From the geneMANIA view, overlapping the network pathway with the log expression values, BRCA1 is seen as downregulated in the pathway for DNA Double-Strand Break Repair pathway. This result again coincides with results from the paper by Xu et.al. which indicated that the KO of the DDX39B complex leads to the downregulation of the BRCA1 genes which in turn downregulates the DNA Double-Strand Break Repair pathway.
 
 ![cytoscape result](images/fig7.png)
 <br/>
-**Figure 10:** GeneMania of the DNA Double-Strand Break Repair pathway overlayed with the rank data. BRCA1 is downregulated as seen in the figure, and is highlighted in Yellow.
+**Figure 10:** GeneMania of the DNA Double-Strand Break Repair pathway interaction network, overlayed with the rank data. BRCA1 is downregulated as seen in the figure, and is highlighted in Yellow.
 <br/>
 <br/>
 
 ![cytoscape result](images/fig6.png)
 <br/>
-**Figure 11:** Close up of GeneMania of the DNA Double-Strand Break Repair pathway overlayed with the rank data. BRCA1 is downregulated as seen in the figure. 
+**Figure 11:** Close up of GeneMania of the DNA Double-Strand Break Repair pathway interaction network overlayed with the rank data. BRCA1 is downregulated as seen in the figure. 
 <br/>
 <br/>
 
