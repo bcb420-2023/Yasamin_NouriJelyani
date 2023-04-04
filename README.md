@@ -5,4 +5,4 @@ Assignment 1: https://github.com/bcb420-2023/Yasamin_NouriJelyani/blob/main/assi
 
 Assignment 2: https://github.com/bcb420-2023/Yasamin_NouriJelyani/blob/main/assignment2/A2_YasaminNouriJelyani.html
 
-Assignment 3: https://github.com/bcb420-2023/Yasamin_NouriJelyani/blob/main/assignment3/A3_YasaminNouriJelyani.nb.html
+Assignment 3: https://github.com/bcb420-2023/Yasamin_NouriJelyani/blob/main/assignment3/A3_YasaminNouriJelyani.html
